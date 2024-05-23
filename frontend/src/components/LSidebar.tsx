@@ -13,7 +13,7 @@ const LSidebar = () => {
         },
         {
             icon: Home,
-            href: "/",
+            href: "/home",
             label: "Home",
         },
         {
@@ -34,7 +34,9 @@ const LSidebar = () => {
             <div className="space-y-3 pt-5">
                 {routes.map((route) => (
                     <div
-                        onClick={() => onNavigate(route.href)}
+                        onClick={() => {
+                          onNavigate(route.href)
+                        }}
                         key={route.href}
                         className=" group flex flex-col items-center justify-center cursor-pointer "
                     >

@@ -1,10 +1,8 @@
-
 import './App.css'
-import LSidebar from './components/LSidebar';
-import RSidebar from './components/RSidebar';
 import HomePage from './pages/HomePage'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import HistoryPage from './pages/HistoryPage';
 
 
 function App() {
@@ -12,11 +10,10 @@ function App() {
   return (
     <>
       <Router>
-        <LSidebar/>
-        <RSidebar/>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path='/' element={<Login />} />
           <Route path='/home' element={<HomePage />} />
+          <Route path='/history' element={<HistoryPage />} />
         </Routes>
       </Router>
     </>

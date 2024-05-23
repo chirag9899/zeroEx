@@ -7,8 +7,12 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Open Sans', 'sans-serif'],
+        oswald: ['Oswald', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
       },
       colors: {
+        'primary-text': '#11181C',
+        'secondary-text': '#6b7689',
         'stealth-primary' : '#000000',
         'stealth-secondary' : '#FFFFFF',
         'stealth-gradient-lime': '#EEFC8E',
