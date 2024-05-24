@@ -61,22 +61,21 @@ const Login = () => {
         <div>
           <p className='text-2xl font-roboto'>Login to the world of trading</p>
         </div>
-        <ThirdwebProvider>
-          <ConnectEmbed
-            onConnect={() => navigate('/home')}
-            client={client}
-            wallets={wallets}
-            theme={lightTheme({
-              colors: {
-                // accentText: "#BEFA46",
-                // accentButtonBg: "#BEFA46",
-                // accentButtonText: "#000000",
-                // modalBg: "#FFFFFF",
-                // borderColor: "#FFFFFF"
-              },
-            })}
-          />
-        </ThirdwebProvider>
+
+        <ConnectEmbed
+          onConnect={() => navigate('/home')}
+          client={client}
+          wallets={wallets}
+          theme={lightTheme({
+            colors: {
+              // accentText: "#BEFA46",
+              // accentButtonBg: "#BEFA46",
+              // accentButtonText: "#000000",
+              // modalBg: "#FFFFFF",
+              // borderColor: "#FFFFFF"
+            },
+          })}
+        />
       </div>
     </div>
   )

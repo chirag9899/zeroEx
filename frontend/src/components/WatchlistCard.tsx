@@ -21,7 +21,7 @@ const WatchlistCard: React.FC<CardProps> = ({ name, symbol, price, change, graph
   );
 
   return (
-    <div className="flex justify-evenly items-center p-2 bg-white rounded-xl  my-1">
+    <div className="flex justify-evenly items-center p-2 bg-white rounded-xl w-full">
       <div className='flex space-x-2'>
         <div className="bg-stealth-gradient rounded-full w-12 h-12 flex items-center justify-center">
           {symbol === 'BTC' ? <img src={bitcoin} alt="" className='w-8 h-8'/> : null}

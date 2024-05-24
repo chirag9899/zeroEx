@@ -8,7 +8,7 @@ const LSidebar = () => {
     const routes = [
         {
           icon: Ghost,
-          href: "/",
+          href: "/home",
           label: "stealth",
         },
         {

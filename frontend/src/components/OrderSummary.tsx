@@ -7,11 +7,11 @@ const OrderSummary: React.FC = () => {
     <div className="p-6">
       <div className="mb-4">
         <div className="flex justify-between mb-2 space-x-20">
-          <span className="text-gray-500">Rate</span>
+          <span className="text-gray-700">Rate</span>
           <span>1 USDT = 0.0130 LTC</span>
         </div>
         <div className="flex justify-between mb-2 space-x-20">
-          <span className="text-gray-500">Estimate Amount</span>
+          <span className="text-gray-700">Estimate Amount</span>
           <span>132312312 USDC</span>
         </div>
         <hr className="my-4"/>

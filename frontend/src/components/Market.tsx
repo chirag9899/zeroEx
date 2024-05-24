@@ -31,7 +31,7 @@ function Market() {
   );
 
   return (
-    <div className='h-80 rounded-lg p-3'>
+    <div className='h-[58vh] rounded-lg '>
       <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }}>
         <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
       </div>
