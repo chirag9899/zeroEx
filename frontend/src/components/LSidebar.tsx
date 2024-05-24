@@ -30,7 +30,7 @@ const LSidebar = () => {
     };
 
     return (
-        <div className="h-full w-24 fixed left-0 top-0 text-stealth-primary bg-l-sidebar">
+        <div className="h-full w-[6%] fixed left-0 top-0 text-stealth-primary bg-l-sidebar">
             <div className="space-y-3 pt-5">
                 {routes.map((route) => (
                     <div
