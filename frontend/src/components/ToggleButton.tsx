@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 
 const ToggleButton: React.FC = () => {
+  
   const [active, setActive] = useState<'sale' | 'purchase'>('sale');
 
   return (
@@ -15,7 +16,7 @@ const ToggleButton: React.FC = () => {
       ></div>
       <button
         className={`flex-1 py-2 px-4 rounded-full z-10 focus:outline-none transition-colors duration-300 ${
-          active === 'sale' ? 'text-white' : 'text-gray-700'
+          active === 'sale' ? 'text-black font-bold' : 'text-gray-700'
         }`}
         onClick={() => setActive('sale')}
       >
@@ -23,7 +24,7 @@ const ToggleButton: React.FC = () => {
       </button>
       <button
         className={`flex-1 py-2 px-4 rounded-full z-10 focus:outline-none transition-colors duration-300 ${
-          active === 'purchase' ? 'text-white' : 'text-gray-700'
+          active === 'purchase' ? 'text-black font-bold' : 'text-gray-700'
         }`}
         onClick={() => setActive('purchase')}
       >
