@@ -43,7 +43,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <div className='flex justify-center items-center p-20 space-x-20'>
+    <div className='flex justify-center items-center p-20 space-x-20 h-screen'>
       <div className='flex flex-col justify-start items-start w-1/2'>
         <div className='flex items-center'>
           <img src={logo} className='h-32 w-32 mr-2' />

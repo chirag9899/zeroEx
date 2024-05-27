@@ -1,58 +1,115 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 
-const Sell: React.FC = () => {
-  const [selectedCurrency, setSelectedCurrency] = useState('bitcoin');
-  const [inputValue, setInputValue] = useState('');
-  const currencies = {
-    bitcoin: { name: 'Etherium', symbol: 'ETH' },
-    ccip: { name: 'CCIP', symbol: 'CCIP' },
+interface OrderProps {
+  formData: {
+    selectedMarket: string;
+    status: string;
+    createdAt: string;
+    amount: string;
+    buy: string;
+    sell: string;
+  };
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      selectedMarket: string;
+      status: string;
+      createdAt: string;
+      amount: string;
+      buy: string;
+      sell: string;
+    }>
+  >;
+}
+
+const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
+  const { amount, buy, selectedMarket } = formData;
+  const inputValue = amount;
+
+  const [outputAmount, setOutputAmount] = React.useState(0);
+
+  // Static exchange rates for demonstration
+  const exchangeRates = {
+    'ETH/CCIP': 20,  // Example: 1 ETH = 20 CCIP
+    'CCIP/ETH': 0.05  // Example: 1 CCIP = 0.05 ETH
   };
 
+  useEffect(() => {
+    const inputAmount = parseFloat(inputValue) || 0;
+    const rateKey = `${formData.sell}/${buy}`;
+    const rate = exchangeRates[rateKey] || 1;
+    setOutputAmount(inputAmount * rate);
+  }, [inputValue, buy, formData.sell]);
+
+  useEffect(() => {
+    const [base, quote] = selectedMarket.split('/');
+    setData((prevData) => ({
+      ...prevData,
+      buy: base,
+      sell: quote,
+    }));
+  }, [selectedMarket, setData]);
+
   const handleCurrencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCurrency(event.target.value);
+    const currency = event.target.value;
+    const otherCurrency = currency === formData.buy ? formData.sell : formData.buy;
+    setData((prevData) => ({
+      ...prevData,
+      buy: otherCurrency,
+      sell: currency,
+    }));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     // Validate that the input is numeric
     if (/^\d*\.?\d*$/.test(value)) {
-      setInputValue(value);
+      setData((prevData) => ({
+        ...prevData,
+        amount: value,
+      }));
     }
   };
 
-  const { name, symbol } = currencies[selectedCurrency];
+  const receiveCurrency = formData.buy;
 
   return (
-    <div className="w-full max-w-sm p-4 bg-stealth-gradient rounded-xl shadow-lg text-left relative font-roboto text-sky-200">
+    <div className="w-full max-w-sm p-6 bg-stealth-gradient rounded-xl shadow-lg text-left relative font-roboto text-sky-200">
       <div className="absolute top-0 right-0 mt-4 mr-4">
         <select 
-          value={selectedCurrency}
+          value={formData.sell}
           onChange={handleCurrencyChange}
-          className="bg-transparent border-none outline-none"
+          className="bg-transparent border-none outline-none text-sky-200"
         >
-          <option value="bitcoin" className='bg-blue-500 text-white border-none'>ETH</option>
-          <option value="ccip"className='bg-blue-500 text-white border-none'>CCIP</option>
+          <option value={formData.buy} className='bg-blue-500 text-white border-none'>{formData.buy}</option>
+          <option value={formData.sell} className='bg-blue-500 text-white border-none'>{formData.sell}</option>
         </select>
       </div>
-      <h2 className="text-sm font-semibold mb-2">You send</h2>
-      <div className="flex items-center overflow-hidden">
-        <input 
-          type="text" 
-          className="text-3xl pt-2 font-medium bg-transparent border-none outline-none overflow-hidden text-ellipsis whitespace-nowrap max-w-full placeholder-sky-200"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder="Enter amount"
-          style={{ width: `${inputValue.length || 15}ch` }}
-        />
+      <div className="mb-4">
+        <h2 className="text-sm font-semibold mb-1">You send</h2>
+        <div className="flex items-center overflow-hidden">
+          <input 
+            type="text" 
+            className="text-3xl pt-2 font-medium bg-transparent border-none outline-none overflow-hidden text-ellipsis whitespace-nowrap max-w-full placeholder-sky-200 text-white"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="Enter amount"
+            style={{ width: `${inputValue.length || 15}ch` }}
+          />
+        </div>
       </div>
-      <div className="text-right">
-        <p className="text-lg font-semibold">{name}</p>
-        <p className="text-sm ">{symbol}</p>
-      </div>
-      <div className="mt-2 mb-6 border-t border-dashed border-black"></div>
-      <div className="flex justify-between items-center">
-        <p className="text-sm ">Price in $</p>
-        <p className="text-lg font-semibold">$2,356.11</p>
+   
+      <div className="mt-4 mb-6 border-t border-dashed border-gray-400"></div>
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-sm font-semibold mb-1">You receive</h2>
+          <div className="text-right">
+            <p className="text-lg font-semibold">{`${outputAmount.toFixed(2)} ${receiveCurrency}`}</p>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-sm">Price in $</p>
+          <p className="text-lg font-semibold">$2,356.11</p>
+        </div>
       </div>
     </div>
   );
