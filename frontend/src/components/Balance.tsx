@@ -4,9 +4,12 @@ import { ArrowDownLeft, Plus } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { depositFunds } from "../utils/helper";
+import { ClipLoader } from "react-spinners"; // Import the loader
 
 const Balance: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [loadingWithdraw, setLoadingWithdraw] = useState(false);
+  const [loadingAddBalance, setLoadingAddBalance] = useState(false);
   const [modalData, setModalData] = useState({
     amount: 0,
     title: "",
@@ -37,26 +40,40 @@ const Balance: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handleSubmitOnWithdraw = () => {
-    depositFunds(modalData.amount);
+  const handleSubmitOnWithdraw = async () => {
+    setLoadingWithdraw(true);
     setModalOpen(false);
-    setModalData({
-      amount: 0,
-      title: "",
-      onSubmit: () => {},
-    });
-    toast.success("Withdrawal Successful");
+    try {
+      await depositFunds(modalData.amount);
+      toast.success("Withdrawal Successful");
+    } catch (error) {
+      toast.error("Withdrawal Failed");
+    } finally {
+      setLoadingWithdraw(false);
+      setModalData({
+        amount: 0,
+        title: "",
+        onSubmit: () => {},
+      });
+    }
   };
 
-  const handleSubmitOnAddBalance = () => {
-    depositFunds(modalData.amount);
+  const handleSubmitOnAddBalance = async () => {
+    setLoadingAddBalance(true);
     setModalOpen(false);
-    setModalData({
-      amount: 0,
-      title: "",
-      onSubmit: () => {},
-    });
-    toast.success("Balance Added Successfully");
+    try {
+      await depositFunds(modalData.amount);
+      toast.success("Balance Added Successfully");
+    } catch (error) {
+      toast.error("Adding Balance Failed");
+    } finally {
+      setLoadingAddBalance(false);
+      setModalData({
+        amount: 0,
+        title: "",
+        onSubmit: () => {},
+      });
+    }
   };
 
   return (
@@ -67,16 +84,26 @@ const Balance: React.FC = () => {
       </div>
       <div className="flex space-x-4">
         <button
-          className="w-20 h-20 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800"
+          className="w-20 h-20 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800 relative"
           onClick={() => handleOnClick("withdraw")}
+          disabled={loadingWithdraw}
         >
-          <ArrowDownLeft className="w-10 h-10" />
+          {loadingWithdraw ? (
+            <ClipLoader size={30} color={"#fff"} />
+          ) : (
+            <ArrowDownLeft className="w-10 h-10" />
+          )}
         </button>
         <button
-          className="w-20 h-20 bg-stealth-yellow text-black rounded-full flex items-center justify-center hover:bg-stealth-yellow"
+          className="w-20 h-20 bg-stealth-yellow text-black rounded-full flex items-center justify-center hover:bg-stealth-yellow relative"
           onClick={() => handleOnClick("addBalance")}
+          disabled={loadingAddBalance}
         >
-          <Plus className="w-10 h-10" />
+          {loadingAddBalance ? (
+            <ClipLoader size={30} color={"#000"} />
+          ) : (
+            <Plus className="w-10 h-10" />
+          )}
         </button>
       </div>
 

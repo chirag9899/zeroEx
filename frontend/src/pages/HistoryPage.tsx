@@ -31,7 +31,7 @@ const HistoryPage = () => {
   ];
 
   return (
-    <div className="ml-[6%] mr-[30%] p-4 bg-page">
+    <div className="ml-[6%] mr-[30%] p-4 bg-page h-[100vh]">
       <LSidebar />
       <div className="flex flex-col gap-3">
         <Table data={orderData} columns={columns} />
