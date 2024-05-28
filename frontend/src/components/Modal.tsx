@@ -25,6 +25,13 @@ const Modal: React.FC<ModalProps> = ({
           <X />
         </button>
         <h2 className="text-2xl font-bold mb-4">{modalData.title}</h2>
+        <div className="flex flex-col space-y-2 py-2">
+        <select 
+          className=" text-black py-2 px-4 rounded w-full border"
+        >
+          <option className="text-black py-2 px-4 rounded w-full border" >ETH</option>
+          <option className="text-black py-2 px-4 rounded w-full border">USDC</option> 
+        </select>
         <input
           type="number"
           value={modalData.amount}
@@ -32,6 +39,7 @@ const Modal: React.FC<ModalProps> = ({
           className="border border-gray-300 p-2 mb-4 w-full rounded"
           placeholder="Enter Amount"
         />
+        </div>
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded w-full"
           onClick={modalData.onSubmit}

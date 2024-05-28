@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { PropagateLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 interface OrderSummaryProps {
   formData: {
@@ -21,17 +23,34 @@ interface OrderSummaryProps {
   >;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ formData }) => {
-  const handleCreateOrder = () => {
-    // Retrieve existing orders from localStorage
-    const existingOrders = JSON.parse(localStorage.getItem("orderData") || "[]");
-    
-    // Append the new order to the existing orders
-    const updatedOrders = [...existingOrders, formData];
 
-    // Save the updated orders back to localStorage
-    localStorage.setItem("orderData", JSON.stringify(updatedOrders));
-    console.log("Order saved to localStorage", formData);
+
+const OrderSummary: React.FC<OrderSummaryProps> = ({ formData }) => {
+
+  
+  const [loadingCreateOrder, setLoadingCreateOrder] = useState(false);
+  const handleCreateOrder = () => {
+    setLoadingCreateOrder(true);
+    try{
+      // Retrieve existing orders from localStorage
+      const existingOrders = JSON.parse(
+        localStorage.getItem("orderData") || "[]"
+      );
+  
+      // Append the new order to the existing orders
+      const updatedOrders = [...existingOrders, formData];
+  
+      // Save the updated orders back to localStorage
+      localStorage.setItem("orderData", JSON.stringify(updatedOrders));
+      console.log("Order saved to localStorage", formData);
+      toast.success("order created successfully");
+    }
+    catch(error){
+      console.log(error);
+    }
+    finally{
+      setLoadingCreateOrder(false);
+    }
   };
 
   return (
@@ -55,7 +74,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ formData }) => {
         className="w-full py-3 text-white bg-black rounded-full hover:bg-gray-900 transition duration-300"
         onClick={handleCreateOrder}
       >
-        Create Order
+        {loadingCreateOrder ? (
+          <div className="py-3 mb-2">
+            <PropagateLoader size={10} color={"#fff"} />
+          </div>
+        ) : (
+          <span className="font-semibold  ">Create Order</span>
+        )}
       </button>
     </div>
   );

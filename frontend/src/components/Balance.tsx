@@ -79,8 +79,17 @@ const Balance: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center rounded-lg bg-l-sidebar p-4">
       <div className="text-center mb-5">
-        <h1 className="text-xl pb-2">My Wallet</h1>
-        <p className="text-5xl font-bold">$128,921</p>
+        <h1 className="text-l font-bold pb-2">My Wallet</h1>
+        <div className="flex space-x-10">
+          <div className="">
+              ETH balance
+              <p className="text-4xl font-bold">$99.123</p>
+          </div>
+          <div className="">
+              USDC balance
+              <p className="text-4xl font-bold">$142.213</p>
+          </div>
+        </div>
       </div>
       <div className="flex space-x-4">
         <button

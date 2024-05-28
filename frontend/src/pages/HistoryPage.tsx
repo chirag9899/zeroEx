@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import LSidebar from "../components/LSidebar";
 import RSidebar from "../components/RSidebar";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,7 @@ const HistoryPage = () => {
   ];
 
   return (
-    <div className="ml-[6%] mr-[30%] p-4 bg-page h-[100vh]">
+    <div className="ml-[6%] mr-[30%] p-4  ">
       <LSidebar />
       <div className="flex flex-col gap-3">
         <Table data={orderData} columns={columns} />
