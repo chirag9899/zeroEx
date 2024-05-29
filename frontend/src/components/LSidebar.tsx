@@ -58,7 +58,7 @@ const LSidebar = () => {
             className=" group flex flex-col items-center justify-center cursor-pointer "
           >
             {route.label === "stealth" ? (
-              <button className=' bg-stealth-gradient rounded-full p-2 shadow-lg'>
+              <button className=''>
                 <img src={Ghost} className="h-12 w-12  " alt="Ghost" />
               </button>
             ) : (

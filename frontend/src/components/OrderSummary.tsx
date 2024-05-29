@@ -79,7 +79,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ formData }) => {
             <PropagateLoader size={10} color={"#fff"} />
           </div>
         ) : (
-          <span className="font-semibold  ">Create Order</span>
+          <span className="font-semibold  ">Confirm</span>
         )}
       </button>
     </div>

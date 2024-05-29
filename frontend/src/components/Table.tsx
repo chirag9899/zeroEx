@@ -82,11 +82,11 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
                   )}
                 </tbody>
               </table>
-              <div
+              {/* <div
                 className={`absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-gray-200 to-transparent pointer-events-none transition-opacity duration-300 ${
                   showShadow ? 'opacity-100' : 'opacity-0'
                 }`}
-              ></div>
+              ></div> */}
             </div>
           </div>
         </div>
