@@ -15,9 +15,10 @@ module.exports = {
         'secondary-text': '#6b7689',
         'stealth-primary': '#000000',
         'stealth-secondary': '#FFFFFF',
-        'stealth-gradient-lime': '#205072',
-        'stealth-gradient-teal': '#329d9c ',
-        'stealth-yellow': '#f9c449',
+        'stealth-gradient-lime': '#0ba360',
+        'stealth-gradient-teal': '#3cba92 ',
+        'stealth-yellow': '#f9d423',
+        'stealth-yellow-dark': '#f9d473',
       },
       boxShadow: {
         'strong': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.05)',
@@ -32,7 +33,7 @@ module.exports = {
       },
       backgroundImage: theme => ({
         'stealth-gradient': `linear-gradient(to bottom left, ${theme('colors.stealth-gradient-lime')}, ${theme('colors.stealth-gradient-teal')} )`,
-        // 'stealth-gradient': `bg-gradient-to-tr from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%`,
+        // 'stealth-gradient': 'linear-gradient(68.6deg, rgba(79,183,131,1) 14.4%, rgba(254,235,151,1) 92.7%)'
       }),
     },
   },

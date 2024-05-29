@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { AlignLeft, History, Home } from 'lucide-react';
+import { useState } from "react";
+import { AlignLeft, History, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Ghost from "../assets/ghost.svg";
-import SelectChain from './SelectChain';
+import SelectChain from "./SelectChain";
 
 const LSidebar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -55,25 +55,32 @@ const LSidebar = () => {
               }
             }}
             key={route.href}
-            className=" group flex flex-col items-center justify-center cursor-pointer "
+            className="group flex flex-col items-center justify-center cursor-pointer"
           >
             {route.label === "stealth" ? (
-              <button className=''>
-                <img src={Ghost} className="h-12 w-12  " alt="Ghost" />
+              <button className="">
+                <img src={Ghost} className="h-12 w-12" alt="Ghost" />
               </button>
+            ) : route.label === "Chains" ? (
+              <div className="relative">
+                <button className="hover:bg-black hover:text-white rounded-full transition p-3 focus:bg-black focus:text-white">
+                  <route.icon className="h-6 w-6" />
+                </button>
+                <SelectChain
+                  isOpen={isDropdownOpen}
+                  toggleDropdown={toggleDropdown}
+                />
+              </div>
             ) : (
-              <button className='hover:bg-black hover:text-white rounded-full transition p-3 focus:bg-black focus:text-white'>
-                <route.icon className="h-6 w-6  " />
+              <button className="hover:bg-black hover:text-white rounded-full transition p-3 focus:bg-black focus:text-white">
+                <route.icon className="h-6 w-6" />
               </button>
             )}
           </div>
         ))}
-        <div className="flex flex-col items-center justify-center">
-          <SelectChain isOpen={isDropdownOpen} toggleDropdown={toggleDropdown} />
-        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default LSidebar;

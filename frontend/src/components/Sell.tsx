@@ -73,15 +73,15 @@ const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
   const receiveCurrency = formData.buy;
 
   return (
-    <div className="w-full max-w-sm p-6 bg-stealth-gradient rounded-xl shadow-lg text-left relative font-roboto text-sky-200">
+    <div className="w-full max-w-sm p-6 bg-stealth-gradient rounded-xl shadow-lg text-left relative font-roboto text-black">
       <div className="absolute top-0 right-0 mt-4 mr-4">
         <select 
           value={formData.sell}
           onChange={handleCurrencyChange}
-          className="bg-transparent border-none outline-none text-sky-200"
+          className="bg-transparent border-none outline-none text-black"
         >
-          <option value={formData.buy} className='bg-blue-500 text-white border-none'>{formData.buy}</option>
-          <option value={formData.sell} className='bg-blue-500 text-white border-none'>{formData.sell}</option>
+          <option value={formData.buy} >{formData.buy}</option>
+          <option value={formData.sell} >{formData.sell}</option>
         </select>
       </div>
       <div className="mb-4">
@@ -89,7 +89,7 @@ const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
         <div className="flex items-center overflow-hidden">
           <input 
             type="text" 
-            className="text-3xl pt-2 font-medium bg-transparent border-none outline-none overflow-hidden text-ellipsis whitespace-nowrap max-w-full placeholder-sky-200 text-white"
+            className="text-3xl pt-2 font-medium bg-transparent border-none outline-none overflow-hidden text-ellipsis whitespace-nowrap max-w-full placeholder-gray-700 text-white"
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Enter amount"
@@ -98,7 +98,7 @@ const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
         </div>
       </div>
    
-      <div className="mt-4 mb-6 border-t border-dashed border-gray-400"></div>
+      <div className="mt-4 mb-6 border-t border-dashed border-black"></div>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-semibold mb-1">You receive</h2>

@@ -104,7 +104,7 @@ const Balance: React.FC = () => {
           )}
         </button>
         <button
-          className="w-20 h-20 bg-stealth-yellow text-black rounded-full flex items-center justify-center hover:bg-stealth-yellow relative"
+          className="w-20 h-20 bg-stealth-yellow text-black rounded-full flex items-center justify-center hover:bg-stealth-yellow-dark relative"
           onClick={() => handleOnClick("addBalance")}
           disabled={loadingAddBalance}
         >
