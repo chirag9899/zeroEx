@@ -94,7 +94,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
         const orders = await readContract({
             contract: contractInstance,
-            method: "function getUserOrder(address) view returns ((address, uint256, uint256, uint256, string, string, uint256, uint256)[])",
+            method: "function getUserOrders(address) view returns ((address, uint256, uint256, uint256, string, string, uint256, uint256)[])",
             params: [activeAccount?.address?.toString() || '0xe2db7ef93684d06bbf47137000065cf26e878b2e'],
         });
         console.log(orders)
