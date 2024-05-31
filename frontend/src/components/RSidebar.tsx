@@ -40,11 +40,11 @@ const wallets = [
 const RSidebar = () => {
   
   const [formData, setFormData] = useState({
-    selectedMarket: 'CCIP/ETH',
+    selectedMarket: 'USDC/ETH',
     status: 'pending',
     createdAt: new Date().toISOString(),
     amount: '0',
-    buy: 'CCIP',
+    buy: 'USDC',
     sell: 'ETH',
   });
 

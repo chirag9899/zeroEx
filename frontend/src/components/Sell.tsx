@@ -29,8 +29,8 @@ const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
 
   // Static exchange rates for demonstration
   const exchangeRates = {
-    'ETH/CCIP': 20,  // Example: 1 ETH = 20 CCIP
-    'CCIP/ETH': 0.05  // Example: 1 CCIP = 0.05 ETH
+    'ETH/USDC': 20,  // Example: 1 ETH = 20 USDC
+    'USDC/ETH': 0.05  // Example: 1 USDC = 0.05 ETH
   };
 
   useEffect(() => {
