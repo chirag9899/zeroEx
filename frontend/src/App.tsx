@@ -14,6 +14,7 @@ import ThreeBody from "./components/ThreeBody";
 function App() {
   const connectionStatus = useActiveWalletConnectionStatus();
 
+  
   return (
     <div className="bg-page min-h-full">
       <Router>
