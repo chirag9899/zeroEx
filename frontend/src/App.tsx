@@ -15,7 +15,7 @@ function App() {
   const connectionStatus = useActiveWalletConnectionStatus();
 
   return (
-    <>
+    <div className="bg-page min-h-full">
       <Router>
         <Routes>
           <Route
@@ -37,7 +37,7 @@ function App() {
           <Route path="/history" element={<HistoryPage />} />
         </Routes>
       </Router>
-    </>
+    </div >
   );
 }
 
