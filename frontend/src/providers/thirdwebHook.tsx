@@ -12,6 +12,7 @@ const ContractContext = createContext<ContractContextState | undefined>(undefine
 
 export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [contractInstance, setContractInstance] = useState<any>(null); 
+  const [userBalance, setUserBalance] = useState<{ETH: number, USDC: number}>({ETH: 0, USDC: 0});
 
   useEffect(() => {
     const client = createThirdwebClient({
@@ -35,25 +36,28 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     }
     initContract();
+    getBalance();
 
   }, [ ]);
   
 
-  const getBalance = async () => {
+const getBalance = async () => {
     const balance  = await readContract({
-        contract: contractInstance,
-        method: "function getUserOrders(address) view returns ((uint256, uint256))",
-        params: ["0xE2db7ef93684d06BbF47137000065cF26E878B2e"],
-      });
-      console.log(balance)
-      return balance
-  };
+            contract: contractInstance,
+            method: "function getUserOrders(address) view returns ((uint256, uint256))",
+            params: ["0xE2db7ef93684d06BbF47137000065cF26E878B2e"],
+        });
+        setUserBalance({ETH: Number(balance[0]), USDC: Number(balance[1])});
+        return balance
+};
 
-
+// const deposit = () => {
+//     const orders = await wr
+// }
 
 
   return (
-    <ContractContext.Provider value={{ contractInstance, getBalance } as any}>
+    <ContractContext.Provider value={{ contractInstance, userBalance } as any}>
       {children}
     </ContractContext.Provider>
   );

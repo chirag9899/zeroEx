@@ -9,12 +9,12 @@ import { useContract } from "../providers/thirdwebHook";
 const HomePage = () => {
 
 
-  const {contractInstance, someFunction} =  useContract()
+  const {contractInstance, userBalance} =  useContract()
   
+  console.log(userBalance)
 
   return (
     <div className="ml-[6%] mr-[30%] p-4 ">
-      <button onClick={someFunction}> read contract</button>
       <LSidebar />
       <div className="grid grid-cols-2 gap-4">
         <Balance />
