@@ -12,6 +12,22 @@ interface ContractContextState {
   someFunction: () => void; 
 }
 
+enum Status {
+    COMPLETED,
+    PENDING,
+    FAILED
+}
+interface Order {
+    user: string;
+    traderAddress: string;
+    amount: number;
+    amountToTransfer: number;
+    buyToken: string;
+    sellToken: string;
+    createdAt: number;
+    status: Status;
+  }
+
 const ContractContext = createContext<ContractContextState | undefined>(undefined);
 
 export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -20,6 +36,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [usdcTokenInstance, setUsdcTokenInstance] = useState<ThirdwebContract>();
 
   const [userBalance, setUserBalance] = useState<{ETH: number, USDC: number}>({ETH: 0, USDC: 0});
+  const [userOrders, setUserOrders] = useState<Order[]>([]);
   const activeAccount = useActiveAccount();
 
 
@@ -72,16 +89,20 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 
     const getUserOrder = async () => {
+        try {
         if (!contractInstance) return; 
 
-        const balance = await readContract({
+        const orders = await readContract({
             contract: contractInstance,
-            method: "function getUserOrder(address) view returns ((uint256, uint256))",
+            method: "function getUserOrder(address) view returns ((address, uint256, uint256, uint256, string, string, uint256, uint256)[])",
             params: [activeAccount?.address?.toString() || '0xe2db7ef93684d06bbf47137000065cf26e878b2e'],
         });
-        console.log(balance)
-        setUserBalance({ ETH: Number(balance[0]), USDC: Number(balance[1]) });
-        return balance
+        console.log(orders)
+        // setUserOrders( );
+        // return balance
+        } catch (error) {
+            throw new Error(`Error getting user order ${error}`)
+        }
     };
 
 const deposit = async(isEth: boolean ,amount: number) => {
@@ -191,7 +212,7 @@ const withdraw = async(isEth: boolean, amount: number) => {
 
 
   return (
-    <ContractContext.Provider value={{ contractInstance, userBalance, deposit, getBalance , withdraw} as any}>
+    <ContractContext.Provider value={{ contractInstance, userBalance, deposit, getBalance , withdraw, getUserOrder} as any}>
       {children}
     </ContractContext.Provider>
   );

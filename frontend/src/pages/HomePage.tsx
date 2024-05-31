@@ -8,8 +8,7 @@ import { useContract } from "../providers/thirdwebHook";
 
 const HomePage = () => {
 
-
-  const {deposit, userBalance, getBalance, withdraw}: any =  useContract()
+  const {deposit, userBalance, getBalance, withdraw, getUserOrder}: any =  useContract()
   
   const data  = async() => {
     const bal =  await getBalance()
@@ -22,6 +21,7 @@ const HomePage = () => {
       <button onClick={data}>balance</button>
       <button onClick={async() => await deposit(false, 1000)}>deposit</button>
       <button onClick={async() => await withdraw(false, 1000)}>withdraw</button>
+      <button onClick={async() => await getUserOrder()}>userOrder</button>
 
       </div>
       <LSidebar />
