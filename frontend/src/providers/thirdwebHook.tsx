@@ -5,7 +5,7 @@ import {abi as executerAbi} from "../abi/executerAbi.ts";
 
 interface ContractContextState {
   contractInstance: any; 
-  someFunction: () => void; 
+  userBalance: () => { ETH: number; USDC: number; }; 
 }
 
 const ContractContext = createContext<ContractContextState | undefined>(undefined);

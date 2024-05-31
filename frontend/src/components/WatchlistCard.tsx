@@ -15,7 +15,7 @@ interface CardProps {
 
 const WatchlistCard: React.FC<CardProps> = ({ name, symbol, price, change, graphColor }) => {
   const graphSvg = (
-    <svg width="150" height="50" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-full h-auto" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0 40C10 30, 20 30, 30 40C40 50, 50 40, 60 30C70 20, 80 30, 90 25C100 20, 110 30, 120 25C130 20, 140 30, 150 20" stroke={graphColor} strokeWidth="2" fill="none" />
     </svg>
   );
@@ -34,7 +34,7 @@ const WatchlistCard: React.FC<CardProps> = ({ name, symbol, price, change, graph
           <p className="text-gray-500">{symbol}</p>
         </div>  
       </div>
-      <div>
+      <div className="flex-1 mx-2">
         {graphSvg}
       </div>
       <div className="text-right">

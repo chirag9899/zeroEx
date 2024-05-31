@@ -6,7 +6,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { depositFunds } from "../utils/helper";
 import { ClipLoader } from "react-spinners"; // Import the loader
 
-const Balance: React.FC = () => {
+interface BalanceProps {
+  userBalance: {
+    ETH: number;
+    USDC: number;
+  };
+}
+
+const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
   const [loadingAddBalance, setLoadingAddBalance] = useState(false);
@@ -81,13 +88,13 @@ const Balance: React.FC = () => {
       <div className="text-center mb-5">
         <h1 className="text-l font-bold pb-2">My Wallet</h1>
         <div className="flex space-x-10">
-          <div className="">
-              ETH balance
-              <p className="text-4xl font-bold">$99.123</p>
+          <div>
+            ETH balance
+            <p className="text-4xl font-bold">${userBalance.ETH}</p>
           </div>
-          <div className="">
-              USDC balance
-              <p className="text-4xl font-bold">$142.213</p>
+          <div>
+            USDC balance
+            <p className="text-4xl font-bold">${userBalance.USDC}</p>
           </div>
         </div>
       </div>

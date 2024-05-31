@@ -45,7 +45,7 @@ const LSidebar = () => {
   return (
     <div className="h-full w-[6%] fixed left-0 top-0 text-stealth-primary bg-l-sidebar">
       <div className="space-y-3 pt-5">
-        {routes.map((route) => (
+        {routes.map((route,index) => (
           <div
             onClick={() => {
               if (route.label === "Chains") {
@@ -54,7 +54,7 @@ const LSidebar = () => {
                 onNavigate(route.href);
               }
             }}
-            key={route.href}
+            key={index}
             className="group flex flex-col items-center justify-center cursor-pointer"
           >
             {route.label === "stealth" ? (

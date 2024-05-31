@@ -4,7 +4,6 @@ import RSidebar from "../components/RSidebar";
 import { useNavigate } from "react-router-dom";
 import { useActiveWalletConnectionStatus } from "thirdweb/react";
 import Table from "../components/Table";
-import Market from "../components/Market";
 
 const HistoryPage = () => {
   const connectionStatus = useActiveWalletConnectionStatus();
