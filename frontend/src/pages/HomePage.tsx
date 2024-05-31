@@ -9,7 +9,7 @@ import { useContract } from "../providers/thirdwebHook";
 const HomePage = () => {
 
 
-  const {contractInstance, userBalance} =  useContract()
+  const {contractInstance, userBalance}: any =  useContract()
   
   console.log(userBalance)
 
