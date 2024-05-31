@@ -39,17 +39,21 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [ ]);
   
 
-  const someFunction = async () => {
-    const balance = await readContract({
+  const getBalance = async () => {
+    const balance  = await readContract({
         contract: contractInstance,
         method: "function getUserOrders(address) view returns ((uint256, uint256))",
         params: ["0xE2db7ef93684d06BbF47137000065cF26E878B2e"],
       });
+      console.log(balance)
       return balance
   };
 
+
+
+
   return (
-    <ContractContext.Provider value={{ contractInstance, someFunction }}>
+    <ContractContext.Provider value={{ contractInstance, getBalance } as any}>
       {children}
     </ContractContext.Provider>
   );
