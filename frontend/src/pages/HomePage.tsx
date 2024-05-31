@@ -1,3 +1,4 @@
+import { getBalance } from "thirdweb/extensions/erc20";
 import Balance from "../components/Balance";
 import LSidebar from "../components/LSidebar";
 import Market from "../components/Market";
@@ -9,12 +10,12 @@ import { useContract } from "../providers/thirdwebHook";
 const HomePage = () => {
 
 
-  const {contractInstance, someFunction} =  useContract()
+  const {contractInstance, getBalance} =  useContract()
   
 
   return (
     <div className="ml-[6%] mr-[30%] p-4 ">
-      <button onClick={someFunction}> read contract</button>
+      <button onClick={getBalance}> read contract</button>
       <LSidebar />
       <div className="grid grid-cols-2 gap-4">
         <Balance />

@@ -35,7 +35,7 @@ const HistoryPage = () => {
       <LSidebar />
       <div className="flex flex-col gap-3">
         <Table data={orderData} columns={columns} />
-        <Market />
+        {/* <Market /> */}
       </div>
       <RSidebar />
     </div>
