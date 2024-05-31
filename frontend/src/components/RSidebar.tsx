@@ -48,7 +48,6 @@ const RSidebar = () => {
     sell: 'ETH',
   });
 
-  console.log(formData)
   return (
     <div className="h-full w-[30%] fixed right-0 top-0 text-stealth-primary bg-r-sidebar">
       <div className='flex justify-end pt-5 pr-7'>
