@@ -22,8 +22,11 @@ const Balance: React.FC = () => {
       amount: Number(event.target.value),
     }));
   };
+  console.log(modalData)
 
   const handleOnClick = (method: string) => {
+    console.log(modalData)
+
     if (method === "withdraw") {
       setModalData({
         ...modalData,
@@ -59,6 +62,8 @@ const Balance: React.FC = () => {
   };
 
   const handleSubmitOnAddBalance = async () => {
+    console.log(modalData)
+
     setLoadingAddBalance(true);
     setModalOpen(false);
     try {

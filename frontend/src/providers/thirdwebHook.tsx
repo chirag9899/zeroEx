@@ -5,6 +5,8 @@ import { useActiveAccount, useSendTransaction } from 'thirdweb/react';
 import {abi as executerAbi} from "../abi/executerAbi.ts";
 import { abi as usdcAbi } from '../abi/usdcAbi.ts';
 import { createWallet, injectedProvider, Wallet, walletConnect } from "thirdweb/wallets";
+import * as paillierBigint from 'paillier-bigint';
+
 
 
 interface ContractContextState {
@@ -37,6 +39,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const [userBalance, setUserBalance] = useState<{ETH: number, USDC: number}>({ETH: 0, USDC: 0});
   const [userOrders, setUserOrders] = useState<Order[]>([]);
+  const  pubkey =  new paillierBigint.PublicKey(2110635290356708079658926219106600858277n, 2110635290356708079658926219106600858278n);
   const activeAccount = useActiveAccount();
 
 
@@ -209,10 +212,16 @@ const withdraw = async(isEth: boolean, amount: number) => {
 }
 
 
-
+const createOrder = async() => {
+    try {
+        
+    } catch (error) {
+        throw new Error(`Error creating order: ${error}`);
+    }
+}
 
   return (
-    <ContractContext.Provider value={{ contractInstance, userBalance, deposit, getBalance , withdraw, getUserOrder} as any}>
+    <ContractContext.Provider value={{ contractInstance, userBalance, deposit, getBalance , withdraw, getUserOrder, pubkey} as any}>
       {children}
     </ContractContext.Provider>
   );

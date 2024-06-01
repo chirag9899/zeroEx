@@ -8,11 +8,13 @@ import {
   createWallet,
   walletConnect,
   inAppWallet,
+  Account,
 } from "thirdweb/wallets";
 import Sell from './Sell';
 import ToggleButton from './ToggleButton';
 import OrderSummary from './OrderSummary';
 import { useState } from 'react';
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
 
 
 const client = createThirdwebClient({
@@ -37,15 +39,20 @@ const wallets = [
   }),
 ];
 
+
 const RSidebar = () => {
-  
+  const activeAccount = useActiveAccount();
+  const activeChain = useActiveWalletChain();
+
   const [formData, setFormData] = useState({
+    user_address: activeAccount?.address || '',
     selectedMarket: 'USDC/ETH',
-    status: 'pending',
-    createdAt: new Date().toISOString(),
+    status: 0,
+    createdAt: "",
     amount: '0',
-    buy: 'USDC',
-    sell: 'ETH',
+    buyToken: 'USDC',
+    sellToken: 'ETH',
+    chain: activeChain?.id === 421614 ? 'arb' : 'avax'
   });
 
   return (
@@ -69,8 +76,8 @@ const RSidebar = () => {
       </div>
       <div className='flex flex-col justify-center items-center p-10  space-y-6'>
         <ToggleButton />
-        <Sell formData={formData} setData={setFormData}/>
-        <OrderSummary formData={formData} setData={setFormData}/>
+        <Sell formData={formData} setData={setFormData} />
+        <OrderSummary formData={formData} setData={setFormData} />
       </div>
     </div>
   )

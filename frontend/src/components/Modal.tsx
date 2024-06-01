@@ -19,11 +19,12 @@ const Modal: React.FC<ModalProps> = ({
 
   const handleFocus = () => {
     if (localAmount === 0) {
-      setLocalAmount('');
+      setLocalAmount(0);
     }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event)
     setLocalAmount(event.target.value);
     onAmountChange(event);
   };

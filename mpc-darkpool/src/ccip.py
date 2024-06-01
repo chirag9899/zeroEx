@@ -7,7 +7,8 @@ from eth_account import Account
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
-
+import uvicorn
+import asyncio
 
 
 app = FastAPI()
@@ -30,7 +31,7 @@ chainsector_arb = "3478487238524512106"
 
 # Load Contract ABI
 try:
-    with open('./contract/ccipAbi.json') as f:
+    with open('./abi/ccipAbi.json') as f:
         contract_abi = json.load(f)
 except FileNotFoundError:
     raise HTTPException(status_code=500, detail="ABI file not found")
@@ -339,4 +340,7 @@ async def lifespan(app: FastAPI):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=2000, reload=True)
+    config = uvicorn.Config("ccip:app", port=2000 ,log_level="info", reload=True)
+    server = uvicorn.Server(config)
+    asyncio.run(server.serve())
+

@@ -48,15 +48,6 @@ contract Executer is ReentrancyGuard, OwnerIsCreator {
     address constant ETHER = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     IERC20 public constant CCIP_TOKEN = IERC20(0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d);
 
-    // CCIP State Variables
-    // bytes32 private s_lastReceivedMessageId;
-    // address private s_lastReceivedTokenAddress;
-    // uint256 private s_lastReceivedTokenAmount;
-    // string private s_lastReceivedText;
-
-    // mapping(uint64 => bool) public allowlistedDestinationChains;
-    // mapping(uint64 => bool) public allowlistedSourceChains;
-    // mapping(address => bool) public allowlistedSenders;
     mapping(uint64 => bool) public allowlistedChains;
     IRouterClient private s_router;
 
