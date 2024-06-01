@@ -29,12 +29,21 @@ const HistoryPage = () => {
     { key: "status", header: "Status" },
     { key: "fulfilledAmount", header: "Remaining Amount" },
   ];
+  
+  const pendingWithdrawalColums = [
+    {key: "user", header: "User"},
+    {key: "amount", header: "Amount"},
+    {key: "isETH", header: "Chain"},
+    {key: "isPending", header: "Status"},
+    {key: "pendingAt", header: "Time"},
+  ];
 
   return (
     <div className="ml-[6%] mr-[30%] p-4  ">
       <LSidebar />
       <div className="flex flex-col gap-3">
         <Table data={orderData} columns={historyColumns} />
+        <Table data={orderData} columns={pendingWithdrawalColums} />
       </div>
       <RSidebar />
     </div>

@@ -9,7 +9,11 @@ import {
   ThirdwebContract,
   PreparedTransaction,
 } from "thirdweb";
-import { useActiveAccount, useSendTransaction } from "thirdweb/react";
+import {
+  useActiveAccount,
+  useActiveWalletChain,
+  useSendTransaction,
+} from "thirdweb/react";
 import { abi as executerAbi } from "../abi/executerAbi.ts";
 import { abi as usdcAbi } from "../abi/usdcAbi.ts";
 import {
@@ -30,16 +34,24 @@ enum Status {
   FAILED,
 }
 interface Order {
-    user: string;
-    traderAddress: string;
-    amount: bigint;
-    amountToTransfer: bigint;
-    buyToken: string;
-    sellToken: string;
-    createdAt: bigint;
-    status: Status;
-    fulfilledAmount?: string;
-  }
+  user: string;
+  traderAddress: string;
+  amount: bigint;
+  amountToTransfer: bigint;
+  buyToken: string;
+  sellToken: string;
+  createdAt: bigint;
+  status: Status;
+  fulfilledAmount?: string;
+}
+
+interface WithdrawalRequest {
+  user: string;
+  amount: bigint;
+  isETH: boolean;
+  isPending: boolean;
+  pendingAt: bigint;
+}
 
 const ContractContext = createContext<ContractContextState | undefined>(
   undefined
@@ -52,6 +64,20 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
   const [contractInstance, setContractInstance] = useState<ThirdwebContract>();
   const [usdcTokenInstance, setUsdcTokenInstance] =
     useState<ThirdwebContract>();
+
+  const activeChain = useActiveWalletChain();
+  console.log(activeChain?.name);
+
+  const chainTokenAddresses: { [key: string]: { [key: string]: string } } = {
+    amoy: {
+      USDC: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+      CONTRACT: "0x32A96ce7203a5257785D801576a61B06e87A5279",
+    },
+    avax: {
+      USDC: "0xasdasdeafb1BDbe2F0316DF893fd58CE46AA4d",
+      CONTRACT: "0xF7bF22cdC0c16ee8704863d03403cf3DC9650B50", // to be changed
+    },
+  };
 
   const [userBalance, setUserBalance] = useState<{ ETH: number; USDC: number }>(
     { ETH: 0, USDC: 0 }
@@ -66,29 +92,48 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const initContract = async () => {
       try {
-        const contract = getContract({
-          address: "0x35801db57ef45068A6865d21500CC1286Fb6b508",
-          abi: executerAbi as any,
-          client: client,
-          chain: arbitrumSepolia,
-        });
+        if (activeChain?.name === "Polygon Amoy"){
+          const contract = getContract({
+            address: chainTokenAddresses["amoy"].CONTRACT,
+            abi: executerAbi as any,
+            client: client,
+            chain: arbitrumSepolia,
+          });
+  
+          const usdc_contract = getContract({
+            address: chainTokenAddresses["amoy"].USDC,
+            abi: usdcAbi as any,
+            client: client,
+            chain: arbitrumSepolia,
+          });
+          setContractInstance(contract);
+          setUsdcTokenInstance(usdc_contract);
+        } 
+        else if (activeChain?.name === "Avalanche Avax") {
+          const contract = getContract({
+            address: chainTokenAddresses["avax"].CONTRACT,
+            abi: executerAbi as any,
+            client: client,
+            chain: arbitrumSepolia,
+          });
+  
+          const usdc_contract = getContract({
+            address: chainTokenAddresses["avax"].USDC,
+            abi: usdcAbi as any,
+            client: client,
+            chain: arbitrumSepolia,
+          });
+          setContractInstance(contract);
+          setUsdcTokenInstance(usdc_contract);
+        }
 
-        const usdc_contract = getContract({
-          address: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
-          abi: usdcAbi as any,
-          client: client,
-          chain: arbitrumSepolia,
-        });
-
-        setContractInstance(contract);
-        setUsdcTokenInstance(usdc_contract);
       } catch (error) {
         console.error(error);
       }
     };
     initContract();
     getBalance();
-  }, []);
+  }, [activeChain]);
 
   const getBalance = async () => {
     if (!contractInstance) return;
@@ -107,10 +152,36 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
     return balance;
   };
 
+  // get pending withdrwals
+  const getPendingWithdrawals = async () => {
+    try {
+      if (!contractInstance) return;
+
+      const pendingWithdrawals: WithdrawalRequest[] = await readContract({
+        contract: contractInstance,
+        method:
+          "function getPendingWithdrawals() view returns ((address, uint256, bool, bool, uint256)[])",
+      }).then((data) =>
+        data.map((item) => {
+          return {
+            user: item[0],
+            amount: item[1],
+            isETH: item[2],
+            isPending: item[3],
+            pendingAt: item[4],
+          };
+        })
+      );
+      console.log("pendingWithdrawals", pendingWithdrawals);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getUserOrder = async () => {
     try {
       if (!contractInstance) return;
-  
+
       const ordersFromContract: Order[] = await readContract({
         contract: contractInstance,
         method:
@@ -133,48 +204,44 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
           };
         })
       );
-      console.log(ordersFromContract);
-  
-      // Get allOrders from localStorage
+      console.log("order from contract", ordersFromContract);
+
       const ordersFromLocal: Order[] = JSON.parse(
         localStorage.getItem("orderData") || "[]"
       );
-      console.log(ordersFromLocal);
-  
-      // Create a copy of allOrders to be updated
+      console.log("order from local", ordersFromLocal);
+
       let updatedOrders = [...ordersFromLocal];
-  
+
       ordersFromContract.forEach((order) => {
         const index = updatedOrders.findIndex(
           (allOrder) =>
             allOrder.user === order.user &&
             allOrder.createdAt === order.createdAt
         );
-  
+
         if (index !== -1) {
           if (updatedOrders[index].amount - order.amount === BigInt(0)) {
-            // Change the status to completed if the amounts are equal
             updatedOrders[index].status = Status.COMPLETED;
           } else {
-            // Update the order with the subtracted amount and adjust the amount format if status is pending
             if (updatedOrders[index].status === Status.PENDING) {
+              updatedOrders[index].fulfilledAmount = `${
+                updatedOrders[index].amount
+              } / ${updatedOrders[index].amount - order.amount}`;
               updatedOrders[index].amount -= order.amount;
-              updatedOrders[index].fulfilledAmount = `${updatedOrders[index].amount} / ${updatedOrders[index].amount - order.amount}`;
             }
           }
         }
       });
-  
+
       localStorage.setItem("orderData", JSON.stringify(updatedOrders));
       console.log("updatedOrders", updatedOrders);
-  
-      // Optionally, update the state or return updatedOrders
+
       setUserOrders(updatedOrders);
     } catch (error) {
       throw new Error(`Error getting user order ${error}`);
     }
   };
-  
 
   const deposit = async (isEth: boolean, amount: number) => {
     console.log(isEth, amount);
@@ -287,6 +354,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
           getBalance,
           withdraw,
           getUserOrder,
+          getPendingWithdrawals,
         } as any
       }
     >
