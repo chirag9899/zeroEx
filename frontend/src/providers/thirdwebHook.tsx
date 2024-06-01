@@ -11,8 +11,8 @@ import {
 } from "thirdweb";
 import {
   useActiveAccount,
-  useActiveWalletChain,
   useSendTransaction,
+  useActiveWalletChain,
 } from "thirdweb/react";
 import { abi as executerAbi } from "../abi/executerAbi.ts";
 import { abi as usdcAbi } from "../abi/usdcAbi.ts";
@@ -22,6 +22,7 @@ import {
   Wallet,
   walletConnect,
 } from "thirdweb/wallets";
+import * as paillierBigint from "paillier-bigint";
 
 interface ContractContextState {
   contractInstance: any;
@@ -83,6 +84,10 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
     { ETH: 0, USDC: 0 }
   );
   const [userOrders, setUserOrders] = useState<Order[]>([]);
+  const pubkey = new paillierBigint.PublicKey(
+    2110635290356708079658926219106600858277n,
+    2110635290356708079658926219106600858278n
+  );
   const activeAccount = useActiveAccount();
 
   useEffect(() => {
@@ -92,14 +97,14 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const initContract = async () => {
       try {
-        if (activeChain?.name === "Polygon Amoy"){
+        if (activeChain?.name === "Polygon Amoy") {
           const contract = getContract({
             address: chainTokenAddresses["amoy"].CONTRACT,
             abi: executerAbi as any,
             client: client,
             chain: arbitrumSepolia,
           });
-  
+
           const usdc_contract = getContract({
             address: chainTokenAddresses["amoy"].USDC,
             abi: usdcAbi as any,
@@ -108,15 +113,14 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
           });
           setContractInstance(contract);
           setUsdcTokenInstance(usdc_contract);
-        } 
-        else if (activeChain?.name === "Avalanche Avax") {
+        } else if (activeChain?.name === "Avalanche Avax") {
           const contract = getContract({
             address: chainTokenAddresses["avax"].CONTRACT,
             abi: executerAbi as any,
             client: client,
             chain: arbitrumSepolia,
           });
-  
+
           const usdc_contract = getContract({
             address: chainTokenAddresses["avax"].USDC,
             abi: usdcAbi as any,
@@ -126,7 +130,6 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
           setContractInstance(contract);
           setUsdcTokenInstance(usdc_contract);
         }
-
       } catch (error) {
         console.error(error);
       }
@@ -292,6 +295,8 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
 
+      console.log(activeAccount.address, contractInstance.address);
+
       transaction = prepareContractCall({
         contract: contractInstance,
         method:
@@ -355,6 +360,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
           withdraw,
           getUserOrder,
           getPendingWithdrawals,
+          pubkey,
         } as any
       }
     >

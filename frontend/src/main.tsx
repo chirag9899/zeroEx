@@ -7,7 +7,7 @@ import { ContractProvider } from './providers/thirdwebHook.tsx'
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <>
     <ContractProvider>
-      <ThirdwebProvider>
+      <ThirdwebProvider >
         <App />
       </ThirdwebProvider>
     </ContractProvider>

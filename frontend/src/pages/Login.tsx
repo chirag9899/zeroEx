@@ -13,6 +13,7 @@ import {
 } from "thirdweb/wallets";
 
 import logo from "../assets/logo.png"
+import { arbitrumSepolia, avalancheFuji } from 'thirdweb/chains';
 
 
 const client = createThirdwebClient({
@@ -65,6 +66,7 @@ const Login = () => {
         <ConnectEmbed
           onConnect={() => navigate('/home')}
           client={client}
+          chains={[avalancheFuji, arbitrumSepolia]}
           wallets={wallets}
           theme={lightTheme({
             colors: {

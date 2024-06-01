@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({
 
   const handleFocus = () => {
     if (localAmount === 0) {
-      setLocalAmount("");
+      setLocalAmount(0);
     }
   };
 
@@ -71,7 +71,9 @@ const Modal: React.FC<ModalProps> = ({
         </div>
         <button
           className="bg-stealth-yellow hover:bg-stealth-yellow-dark text-white py-2 px-4 rounded w-full"
-          onClick={()=>{modalData.onSubmit(localAmount)}}
+          onClick={() => {
+            modalData.onSubmit(localAmount);
+          }}
         >
           Confirm Payment
         </button>

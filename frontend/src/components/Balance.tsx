@@ -33,6 +33,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
       amount: Number(event.target.value),
     }));
   };
+  console.log(modalData);
 
   const handleOnClick = (method: string) => {
     console.log("withdraw", modalData);
