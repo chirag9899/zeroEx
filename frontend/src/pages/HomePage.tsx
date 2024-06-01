@@ -21,7 +21,7 @@ const HomePage = () => {
       <button onClick={async() => await deposit(false, 1000)}>deposit</button>
       <button onClick={async() => await withdraw(false, 1000)}>withdraw</button>
       <button onClick={async() => await getUserOrder()}>userOrder</button>
-
+      <button onClick={async() => await getBalance()}>getBalance</button>
       </div>
       <LSidebar />
       <div className="grid grid-cols-2 gap-4">

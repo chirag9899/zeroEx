@@ -15,9 +15,9 @@ module.exports = {
         'secondary-text': '#6b7689',
         'stealth-primary': '#000000',
         'stealth-secondary': '#FFFFFF',
-        'stealth-gradient-lime': '#80DEEA',
-        'stealth-gradient-teal': '#00ACC1 ',
-        'stealth-yellow': '#f9d423',
+        'stealth-gradient-lime': '#FFFFFF',
+        'stealth-gradient-teal': '#FFFFFF',
+        'stealth-yellow': '#21ac01',
         'stealth-yellow-dark': '#f9d473',
       },
       boxShadow: {
@@ -27,9 +27,9 @@ module.exports = {
         'xl': '12px',
       },
       backgroundColor: {
-        'page': '#f2f2f2',
-        'r-sidebar': '#e0ecde',
-        'l-sidebar': '#D8E2E1',
+        'page': '#d5d5da',
+        'r-sidebar': '#f1f1f8',
+        'l-sidebar': '#f1f1f8',
       },
       backgroundImage: theme => ({
         'stealth-gradient': `linear-gradient(to bottom left, ${theme('colors.stealth-gradient-lime')}, ${theme('colors.stealth-gradient-teal')} )`,

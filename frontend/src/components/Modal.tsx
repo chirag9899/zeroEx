@@ -1,30 +1,34 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-
 interface ModalProps {
   modalData: {
     amount: number;
     title: string;
-    onSubmit: () => void;
+    onSubmit: (val: number) => void;
   };
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
+  onTokenChange: (event: React.ChangeEvent<HTMLSelectElement>) => void; // Add this prop
 }
+
 const Modal: React.FC<ModalProps> = ({
   modalData,
   onAmountChange,
   onClose,
+  onTokenChange, // Add this prop
 }) => {
   const [localAmount, setLocalAmount] = useState(modalData.amount);
 
   const handleFocus = () => {
     if (localAmount === 0) {
-      setLocalAmount('');
+      setLocalAmount("");
     }
   };
 
+  console.log(modalData);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalAmount(event.target.value);
+    setLocalAmount(Number(event.target.value));
     onAmountChange(event);
   };
 
@@ -41,22 +45,33 @@ const Modal: React.FC<ModalProps> = ({
         <div className="flex flex-col space-y-2 py-2">
           <select
             className="text-black py-2 px-4 rounded w-full border"
+            onChange={onTokenChange} // Add this handler
           >
-            <option className="text-black py-2 px-4 rounded w-full border">ETH</option>
-            <option className="text-black py-2 px-4 rounded w-full border">USDC</option>
+            <option
+              className="text-black py-2 px-4 rounded w-full border"
+              value="ETH"
+            >
+              ETH
+            </option>
+            <option
+              className="text-black py-2 px-4 rounded w-full border"
+              value="USDC"
+            >
+              USDC
+            </option>
           </select>
           <input
             type="number"
             value={localAmount}
-            onFocus={handleFocus}
+            // onFocus={handleFocus}
             onChange={handleChange}
             className="border border-gray-300 p-2 mb-4 w-full rounded"
             placeholder="Enter Amount"
           />
         </div>
         <button
-          className="bg-stealth-gradient-teal hover:bg-stealth-gradient-lime text-white py-2 px-4 rounded w-full"
-          onClick={modalData.onSubmit}
+          className="bg-stealth-yellow hover:bg-stealth-yellow-dark text-white py-2 px-4 rounded w-full"
+          onClick={()=>{modalData.onSubmit(localAmount)}}
         >
           Confirm Payment
         </button>

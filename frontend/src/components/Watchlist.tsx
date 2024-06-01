@@ -13,7 +13,7 @@ const Watchlist: React.FC = () => {
 
   return (
     <div className="relative w-full mx-auto p-2 rounded-lg bg-l-sidebar">
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-400 bg-opacity-30 backdrop-blur-sm rounded-lg text-white text-2xl font-bold z-10">
+      <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-30 backdrop-blur-sm rounded-lg text-white text-2xl font-bold z-10">
         <div className="font-roboto text-black">
           Coming Soon
         </div>

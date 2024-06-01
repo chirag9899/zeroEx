@@ -145,7 +145,7 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
                     <th
                       key={column.key}
                       scope="col"
-                      className="px-6 py-3 text-left text-sm font-medium text-stealth-gradient-teal uppercase"
+                      className="px-6 py-3 text-left text-sm font-medium text-stealth-yellow uppercase"
                     >
                       {column.header}
                     </th>

@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { AlignLeft, History, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Ghost from "../assets/ghost.svg";
+import Logo from "../assets/Zex Logo.svg";
 import SelectChain from "./SelectChain";
+import { useContract } from "../providers/thirdwebHook";
+
 
 const LSidebar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const routes = [
     {
-      icon: Ghost,
+      icon: Logo,
       href: "/home",
       label: "stealth",
     },
@@ -42,6 +44,8 @@ const LSidebar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const {getUserOrder}: any =  useContract()
+
   return (
     <div className="h-full w-[6%] fixed left-0 top-0 text-stealth-primary bg-l-sidebar">
       <div className="space-y-3 pt-5">
@@ -50,7 +54,10 @@ const LSidebar = () => {
             onClick={() => {
               if (route.label === "Chains") {
                 toggleDropdown();
-              } else {
+              } else if (route.label === "History") {
+                getUserOrder();
+                onNavigate(route.href);
+              }else {
                 onNavigate(route.href);
               }
             }}
@@ -59,7 +66,7 @@ const LSidebar = () => {
           >
             {route.label === "stealth" ? (
               <button className="">
-                <img src={Ghost} className="h-12 w-12" alt="Ghost" />
+                <img src={Logo} className="h-10 w-10" alt="Ghost" />
               </button>
             ) : route.label === "Chains" ? (
               <div className="relative">

@@ -73,7 +73,7 @@ const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
   const receiveCurrency = formData.buy;
 
   return (
-    <div className="w-full max-w-sm p-6 bg-stealth-gradient rounded-xl shadow-lg text-left relative font-roboto text-black">
+    <div className="w-full max-w-sm p-6 bg-stealth-gradient rounded-xl border border-stealth-yellow text-left relative font-roboto text-black">
       <div className="absolute top-0 right-0 mt-4 mr-4">
         <select 
           value={formData.sell}
@@ -89,7 +89,7 @@ const Sell: React.FC<OrderProps> = ({ formData, setData }) => {
         <div className="flex items-center overflow-hidden">
           <input 
             type="text" 
-            className="text-3xl pt-2 font-medium bg-transparent border-none outline-none overflow-hidden text-ellipsis whitespace-nowrap max-w-full placeholder-gray-700 text-white"
+            className="text-3xl pt-2 font-medium bg-transparent border-none outline-none overflow-hidden text-ellipsis whitespace-nowrap max-w-full placeholder-gray-700 text-black"
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Enter amount"

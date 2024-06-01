@@ -64,7 +64,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ formData }) => {
           <span className="text-gray-700">Estimate Amount</span>
           <span>132312312 USDC</span>
         </div>
-        <hr className="my-4" />
+        <div className="mt-4 mb-6 border-t border-dashed border-black"></div>
         <div className="flex justify-between mb-4 space-x-20">
           <span className="font-semibold">Total</span>
           <span className="font-semibold">$5,254</span>

@@ -21,20 +21,20 @@ const HistoryPage = () => {
   }, [connectionStatus]);
 
 
-  const columns = [
+  const historyColumns = [
     { key: "sell", header: "Purchase Token" },
     { key: "amount", header: "Amount" },
     { key: "selectedMarket", header: "Market" },
     { key: "createdAt", header: "Time" },
     { key: "status", header: "Status" },
+    { key: "fulfilledAmount", header: "Remaining Amount" },
   ];
 
   return (
     <div className="ml-[6%] mr-[30%] p-4  ">
       <LSidebar />
       <div className="flex flex-col gap-3">
-        <Table data={orderData} columns={columns} />
-        {/* <Market /> */}
+        <Table data={orderData} columns={historyColumns} />
       </div>
       <RSidebar />
     </div>
@@ -42,5 +42,6 @@ const HistoryPage = () => {
 };
 
 export default HistoryPage;
+
 
 
