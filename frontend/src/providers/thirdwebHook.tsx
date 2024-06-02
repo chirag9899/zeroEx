@@ -217,24 +217,23 @@ const chainTokenAddresses: { [key: string]: { [key: string]: string } } = {
     try {
       if (!contractInstance) return;
 
-      // const pendingWithdrawals: WithdrawalRequest[] = await readContract({
-      //   contract: contractInstance,
-      //   method: "function getPendingWithdrawals() view returns ((address, uint256, bool, bool, uint256)[])",
-      // }).then((data) =>
-      //   data.map((item) => ({
-      //     user: item[0],
-      //     amount: item[1],
-      //     isETH: item[2],
-      //     isPending: item[3],
-      //     pendingAt: item[4],
-      //   }))
-      // );
-
-      const pendingWithdrawals : WithdrawalRequest[] = [
-        { user: '0xE2db7ef93684d06BbF47137000065cF26E878B2e', amount: 100n, isETH: true, isPending: true, pendingAt: 1633027200n },
-        { user: '0xE2db7ef93684d06BbF47137000065cF26E878B2e', amount: 200n, isETH: false, isPending: false, pendingAt: 1633113600n },
-        { user: '0xE2db7ef93684d06BbF47137000065cF26E878B2e', amount: 300n, isETH: true, isPending: true, pendingAt: 1633200000n },
-      ];
+      const pendingWithdrawals: WithdrawalRequest[] = await readContract({
+        contract: contractInstance,
+        method: "function getPendingWithdrawals() view returns ((address, uint256, bool, bool, uint256)[])",
+      }).then((data) =>
+        data.map((item) => ({
+          user: item[0],
+          amount: item[1],
+          isETH: item[2],
+          isPending: item[3],
+          pendingAt: item[4],
+        }))
+      );
+      // const pendingWithdrawals : WithdrawalRequest[] = [
+      //   { user: '0xE2db7ef93684d06BbF47137000065cF26E878B2e', amount: 100n, isETH: true, isPending: true, pendingAt: 1633027200n },
+      //   { user: '0xE2db7ef93684d06BbF47137000065cF26E878B2e', amount: 200n, isETH: false, isPending: false, pendingAt: 1633113600n },
+      //   { user: '0xE2db7ef93684d06BbF47137000065cF26E878B2e', amount: 300n, isETH: true, isPending: true, pendingAt: 1633200000n },
+      // ];
       const userWithdrawals = pendingWithdrawals.filter(withdrawal => withdrawal.user === activeAccount?.address);
       console.log(userWithdrawals)
       setPendingWithdrawals(userWithdrawals || []);
