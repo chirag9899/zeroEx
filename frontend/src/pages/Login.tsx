@@ -12,7 +12,7 @@ import {
   inAppWallet,
 } from "thirdweb/wallets";
 
-import logo from "../assets/logo.png"
+import logo from "../assets/Zex Logo.svg"
 import { arbitrumSepolia, avalancheFuji } from 'thirdweb/chains';
 
 
@@ -47,9 +47,9 @@ const Login = () => {
     <div className='flex justify-center items-center p-20 space-x-20 h-screen'>
       <div className='flex flex-col justify-start items-start w-1/2'>
         <div className='flex items-center'>
-          <img src={logo} className='h-32 w-32 mr-2' />
+          <img src={logo} className='h-20 w-20 mr-2' />
           <p className='text-6xl font-bold font-oswald text-primary-text'>
-            Stealth Bid
+            ZeroEx
           </p>
         </div>
         <span className='text-2xl font-roboto text-secondary-text'>
