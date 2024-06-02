@@ -9,7 +9,6 @@ interface TableProps {
   data: Record<string, any>[];
   columns: TableColumn[];
 }
-
 const Table: React.FC<TableProps> = ({ data, columns }) => {
   const [showShadow, setShowShadow] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -33,6 +32,19 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
       }
     };
   }, []);
+
+  const formatAmount = (amount: string) => {
+    return parseFloat(amount).toLocaleString();
+  };
+
+  const formatStatus = (status: number) => {
+    const statusMapping: { [key: number]: string } = {
+      0: "Completed",
+      1: "Pending",
+      2: "Failed",
+    };
+    return statusMapping[status] || "Unknown";
+  };
 
   return (
     <div className="flex flex-col bg-white rounded-lg shadow-lg border border-gray-200">
@@ -68,7 +80,13 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
                           key={column.key}
                           className="px-6 py-4 whitespace-nowrap text-sm text-gray-800"
                         >
-                          {row[column.key]}
+                          {column.key === 'amount'
+                            ? formatAmount(row[column.key])
+                            : column.key === 'status'
+                            ? formatStatus(row[column.key])
+                            : row[column.key] !== undefined && row[column.key] !== null
+                            ? row[column.key]
+                            : "N/A"}
                         </td>
                       ))}
                     </tr>
@@ -94,4 +112,3 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
 };
 
 export default Table;
-

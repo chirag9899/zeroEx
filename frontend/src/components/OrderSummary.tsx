@@ -27,65 +27,78 @@ interface OrderProps {
       chain: string;
     }>
   >;
+  price: number; 
+
 }
 
-const OrderSummary: React.FC<OrderProps> = ({ formData }) => {
-  const {chainTokenAddresses} = useContract()
+
+const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
+  const { chainTokenAddresses, total } = useContract();
   const account = useActiveAccount();
   const { pubkey }: any = useContract();
+  const [ render, setRender ] = useState(false);
   const [loadingCreateOrder, setLoadingCreateOrder] = useState(false);
+  const validateForm = () => {
+    const { user_address, selectedMarket, status, amount, buyToken, sellToken, chain } = formData;
+    return user_address && selectedMarket && status !== undefined && Number(amount) > 0 && buyToken && sellToken && chain;
+  };
 
-
-  const handleCreateOrder = () => {
+  const handleCreateOrder = async () => {
+    if (!validateForm()) {
+      toast.error("Please fill in all fields before confirming.");
+      return;
+    }
     setLoadingCreateOrder(true);
     let unixTimestamp = Math.floor(Date.now() / 1000);
 
+    const orderData = {
+      user_address: account?.address,
+      selectedMarket: formData.selectedMarket,
+      status: formData.status,
+      createdAt: unixTimestamp,
+      encrypted_order_value: pubkey.encrypt(BigInt(formData.amount)).toString(),
+      buyToken: chainTokenAddresses[formData.chain][formData.buyToken],
+      sellToken: chainTokenAddresses[formData.chain][formData.sellToken],
+      trader_address: "0x0000000000000000000000000000000000000000",
+      chain: formData.chain,
+    };
 
 
     try {
-      fetch("http://127.0.0.1:5000/add_order", {
+      const response = await fetch("http://127.0.0.1:5000/add_order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user_address: account?.address,
-          selectedMarket: formData.selectedMarket,
-          status: formData.status,
-          createdAt: unixTimestamp,
-          encrypted_order_value: pubkey
-            .encrypt(BigInt(formData.amount))
-            .toString(),
-          buyToken: chainTokenAddresses[formData.chain][formData.buyToken],
-          sellToken: chainTokenAddresses[formData.chain][formData.sellToken],
-          trader_address: "",
-          chain: formData.chain,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          setLoadingCreateOrder(false);
-        });
+        body: JSON.stringify(orderData),
+      });
 
-      // const existingOrders = JSON.parse(
-      //   localStorage.getItem("orderData") || "[]"
-      // );
+      if (response.ok) {
+        const data = await response.json();
+        const existingOrders = JSON.parse(
+          localStorage.getItem("orderData") || "[]"
+        );
 
-      // // Append the new order to the existing orders
-      // const updatedOrders = [...existingOrders, formData];
+        const updatedOrders = [...existingOrders, orderData];
+        const ordersForLocalStorage = updatedOrders.map(order => ({
+          ...order,
+          buyToken: formData.buyToken,
+          sellToken: formData.sellToken,
+          amount: formData.amount,
+        }));
+  
+        localStorage.setItem("orderData", JSON.stringify(ordersForLocalStorage));
 
-      // // Save the updated orders back to localStorage
-      // localStorage.setItem("orderData", JSON.stringify(updatedOrders));
-      // console.log("Order saved to localStorage", formData);
-      // toast.success("order created successfully");
+        toast.success("Order created successfully");
+        setRender(!render)
+      } else {
+        const errorData = await response.json();
+        console.error("Error creating order:", errorData);
+        toast.error("Failed to create order");
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error:", error);
+      toast.error("An error occurred while creating the order");
     } finally {
       setLoadingCreateOrder(false);
     }
@@ -96,17 +109,9 @@ const OrderSummary: React.FC<OrderProps> = ({ formData }) => {
       <div className="mb-4">
         <div className="flex justify-between mb-2 space-x-20">
           <span className="text-gray-700">Rate</span>
-          <span>1 USDT = 0.0130 LTC</span>
-        </div>
-        <div className="flex justify-between mb-2 space-x-20">
-          <span className="text-gray-700">Estimate Amount</span>
-          <span>132312312 USDC</span>
+          <span>1 USDT = {(1/price).toFixed(6)}</span>
         </div>
         <div className="mt-4 mb-6 border-t border-dashed border-black"></div>
-        <div className="flex justify-between mb-4 space-x-20">
-          <span className="font-semibold">Total</span>
-          <span className="font-semibold">$5,254</span>
-        </div>
       </div>
       <button
         className="w-full py-3 text-white bg-black rounded-full hover:bg-gray-900 transition duration-300"
@@ -117,7 +122,7 @@ const OrderSummary: React.FC<OrderProps> = ({ formData }) => {
             <PropagateLoader size={10} color={"#fff"} />
           </div>
         ) : (
-          <span className="font-semibold  ">Confirm</span>
+          <span className="font-semibold">Confirm</span>
         )}
       </button>
     </div>

@@ -16,15 +16,19 @@ app = FastAPI()
 config = {
     "private_key": "b0104cc3ae940f18c66addbb6076c5f98d1c0f350cc2fe0c1b585e66b7ec498b",
     "project_id": "8kt_9nM3xUNeRw9EtlZq6OPaHEf8xmTv",
+    "w3_arb": Web3(Web3.HTTPProvider(f"https://arb-sepolia.g.alchemy.com/v2/8kt_9nM3xUNeRw9EtlZq6OPaHEf8xmTv")),
     "w3_amoy": Web3(Web3.HTTPProvider(f"https://polygon-amoy.g.alchemy.com/v2/SjhJtJ8sLClggBUwq9sJ72HMC4rOjJjE")),
     "w3_avax": Web3(Web3.HTTPProvider(f"https://avalanche-fuji-c-chain-rpc.publicnode.com")),
+    "arb_usdc": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
     "avax_usdc": "0x5425890298aed601595a70AB815c96711a31Bc65",
     "amoy_usdc": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
     "erc20_abi": json.loads('[{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]'),
     "chainsector_avax": 14767482510784806043,
     "chainsector_amoy": 16281711391670634445,
+    "chainsector_arb": 3478487238524512106,
+    "contract_address_arb": "0x31333dA7AAcbE968310e09279bda1dD8dE14d805",
     "contract_address_amoy": "0x32A96ce7203a5257785D801576a61B06e87A5279",
-    "contract_address_avax": "0xF7bF22cdC0c16ee8704863d03403cf3DC9650B50",
+    "contract_address_avax": "0x18Bb384D85A2E613C89F6cD00eBE936f5370A68c",
     "uniswap_router_address_amoy": "0x0000000000000000000000000000000000000000",
     "uniswap_router_address_avax": "0x0000000000000000000000000000000000000000",
     "uniswap_router_abi": json.loads('[{"constant":false,"inputs":[{"name":"amountOutMin","type":"uint256"},{"name":"path","type":"address[]"},{"name":"to","type":"address"},{"name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"name":"","type":"uint256[]"}],"payable":true,"stateMutability":"payable","type":"function"}]')
@@ -40,9 +44,9 @@ except json.JSONDecodeError:
     raise HTTPException(status_code=500, detail="Error decoding ABI file")
 
 # Create contract instances
-config['usdc_amoy'] = config['w3_amoy'].eth.contract(address=config['amoy_usdc'], abi=config['erc20_abi'])
+config['usdc_arb'] = config['w3_arb'].eth.contract(address=config['arb_usdc'], abi=config['erc20_abi'])
 config['usdc_avax'] = config['w3_avax'].eth.contract(address=config['avax_usdc'], abi=config['erc20_abi'])
-config['contract_amoy'] = config['w3_amoy'].eth.contract(address=config['contract_address_amoy'], abi=config['contract_abi'])
+config['contract_arb'] = config['w3_arb'].eth.contract(address=config['contract_address_arb'], abi=config['contract_abi'])
 config['contract_avax'] = config['w3_avax'].eth.contract(address=config['contract_address_avax'], abi=config['contract_abi'])
 
 class TokenTransfer(BaseModel):
@@ -63,6 +67,8 @@ def get_w3_and_contract(chain: str):
         return config['w3_amoy'], config['contract_amoy']
     elif chain == "avax":
         return config['w3_avax'], config['contract_avax']
+    elif chain == "arb":
+        return config['w3_arb'], config['contract_arb']
     else:
         raise HTTPException(status_code=400, detail="Unsupported chain")
 
@@ -156,9 +162,9 @@ def transfer_funds(from_chain: str, to_chain: str, amount: int):
         nonce = w3_from.eth.get_transaction_count(account.address)
 
         txn = contract_from.functions.transferTokensPayNative(
-            config['chainsector_amoy'] if from_chain == "avax" else config['chainsector_avax'],
+            config['chainsector_arb'] if from_chain == "avax" else config['chainsector_avax'],
             contract_to.address,
-            config['avax_usdc'] if from_chain == "avax" else config['amoy_usdc'],
+            config['avax_usdc'] if from_chain == "avax" else config['arb_usdc'],
             amount,
         ).build_transaction({
             'from': account.address,
@@ -182,7 +188,7 @@ def swap_eth_for_usdc(w3, uniswap_router_address, amount_in_eth, min_amount_out_
 
         txn = uniswap_router.functions.swapExactETHForTokens(
             min_amount_out_usdc,
-            [w3.toChecksumAddress(w3.eth.defaultAccount), w3.toChecksumAddress(config['amoy_usdc'])],
+            [w3.toChecksumAddress(w3.eth.defaultAccount), w3.toChecksumAddress(config['arb_usdc'])],
             account.address,
             int((datetime.now() + timedelta(minutes=10)).timestamp())
         ).build_transaction({
@@ -223,14 +229,14 @@ def execute_pending_withdrawals(chain):
 def process_pending_withdrawals_and_check_balance():
     try:
            #Get pending withdrawals from both contracts
-        w3_amoy, contract_amoy = get_w3_and_contract('amoy')
+        w3_arb, contract_arb = get_w3_and_contract('arb')
         w3_avax, contract_avax = get_w3_and_contract('avax')
 
-        amoy_pending_withdrawals = contract_amoy.functions.getPendingWithdrawals().call()
+        arb_pending_withdrawals = contract_arb.functions.getPendingWithdrawals().call()
         avax_pending_withdrawals = contract_avax.functions.getPendingWithdrawals().call()
 
         # for testing
-        amoy_pending_withdrawals = [
+        arb_pending_withdrawals = [
             {"user": "0xE2db7ef93684d06BbF47137000065cF26E878B2e", "amount": 1000, "amountToTransfer": 1000, "isETH": False, "isPending": True, "pendingAt": 1717223605},
             {"user": "0xE2db7ef93684d06BbF47137000065cF26E878B2e", "amount": 2000, "isETH": False, "amountToTransfer": 1000, "isPending": False, "pendingAt": 1717223606}
         ]
@@ -238,31 +244,31 @@ def process_pending_withdrawals_and_check_balance():
             {"user": "0xE2db7ef93684d06BbF47137000065cF26E878B2e", "amount": 3000, "isETH": False, "isPending": True, "amountToTransfer": 1000, "pendingAt": 1717223607}
         ]
 
-        amoy_total_pending_usdc = sum([withdrawal['amountToTransfer'] for withdrawal in amoy_pending_withdrawals if not withdrawal['isETH']])
+        arb_total_pending_usdc = sum([withdrawal['amountToTransfer'] for withdrawal in arb_pending_withdrawals if not withdrawal['isETH']])
         avax_total_pending_usdc = sum([withdrawal['amountToTransfer'] for withdrawal in avax_pending_withdrawals if not withdrawal['isETH']])
 
-        amoy_balance_usdc = config['usdc_amoy'].functions.balanceOf(config['contract_address_amoy']).call()
+        arb_balance_usdc = config['usdc_arb'].functions.balanceOf(config['contract_address_arb']).call()
         avax_balance_usdc = config['usdc_avax'].functions.balanceOf(config['contract_address_avax']).call()
 
-        if amoy_total_pending_usdc > amoy_balance_usdc:
-            transfer_funds("avax", "amoy", abs(amoy_total_pending_usdc - amoy_balance_usdc))
+        if arb_total_pending_usdc > arb_balance_usdc:
+            transfer_funds("avax", "arb", abs(arb_total_pending_usdc - arb_balance_usdc))
         if avax_total_pending_usdc > avax_balance_usdc:
-            transfer_funds("amoy", "avax", abs(avax_total_pending_usdc - avax_balance_usdc))
+            transfer_funds("arb", "avax", abs(avax_total_pending_usdc - avax_balance_usdc))
 
-        amoy_balance_eth = config['w3_amoy'].eth.get_balance(config['contract_address_amoy'])
+        arb_balance_eth = config['w3_arb'].eth.get_balance(config['contract_address_arb'])
         avax_balance_eth = config['w3_avax'].eth.get_balance(config['contract_address_avax'])
 
-        amoy_total_pending_eth = sum([withdrawal['amount'] for withdrawal in amoy_pending_withdrawals if withdrawal['isETH']])
+        arb_total_pending_eth = sum([withdrawal['amount'] for withdrawal in arb_pending_withdrawals if withdrawal['isETH']])
         avax_total_pending_eth = sum([withdrawal['amount'] for withdrawal in avax_pending_withdrawals if withdrawal['isETH']])
 
         return {
-            "amoy_balance_usdc": amoy_balance_usdc,
+            "arb_balance_usdc": arb_balance_usdc,
             "avax_balance_usdc": avax_balance_usdc,
-            "amoy_total_pending_usdc": amoy_total_pending_usdc,
+            "arb_total_pending_usdc": arb_total_pending_usdc,
             "avax_total_pending_usdc": avax_total_pending_usdc,
-            "amoy_balance_eth": amoy_balance_eth,
+            "arb_balance_eth": arb_balance_eth,
             "avax_balance_eth": avax_balance_eth,
-            "amoy_total_pending_eth": amoy_total_pending_eth,
+            "arb_total_pending_eth": arb_total_pending_eth,
             "avax_total_pending_eth": avax_total_pending_eth
         }
     except Exception as e:

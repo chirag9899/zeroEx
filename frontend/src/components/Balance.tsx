@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Modal from "./Modal"; // Import the modal component
 import { ArrowDownLeft, Plus } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { ClipLoader } from "react-spinners"; // Import the loader
 import { useContract } from "../providers/thirdwebHook";
 import { useActiveWalletChain } from "thirdweb/react";
@@ -19,80 +18,76 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
   const [loadingAddBalance, setLoadingAddBalance] = useState(false);
-  const [isEth, setIsEth] = useState(true); // State to track if the selected token is ETH
-  const [modalData, setModalData] = useState({
-    amount: 0,
-    title: "",
-    onSubmit: (_: number) => {},
-  });
 
-  const { deposit, getBalance, withdraw, getUserOrder }: any = useContract();
+  const { deposit, withdraw, modalInput, setModalInput }: any = useContract();
+  const [action, setAction] = useState<string | null>(null);
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setModalData((prevData) => ({
+    const newValue = event.target.value === '0' ? '' : event.target.value;
+    setModalInput((prevData: any) => ({
       ...prevData,
-      amount: Number(event.target.value),
+      amount: isNaN(Number(newValue)) ? 0 : Number(newValue),
+    }));
+  };
+
+  const handleTokenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setModalInput((prevData: any) => ({
+      ...prevData,
+      isEth: event.target.value === "ETH",
     }));
   };
 
   const handleOnClick = (method: string) => {
-    setModalOpen(false); // Ensure modal is closed before opening it with new data
-    setTimeout(() => {
-      if (method === "withdraw") {
-        setModalData({
-          ...modalData,
-          title: "Withdraw",
-          onSubmit: (val: number) => handleSubmitOnWithdraw(val),
-        });
-      } else if (method === "addBalance") {
-        setModalData({
-          ...modalData,
-          title: "Add Balance",
-          onSubmit: (val: number) => handleSubmitOnAddBalance(val),
-        });
-      }
-      setModalOpen(true);
-    }, 0);
+    setAction(method);
+    setModalOpen(true);
   };
 
-  const handleSubmitOnWithdraw = async (val: number) => {
-    setLoadingWithdraw(true);
+  const handleSubmit = async () => {
+    if (action === "withdraw") {
+      await handleWithdraw();
+    } else if (action === "addBalance") {
+      await handleAddBalance();
+    }
     setModalOpen(false);
+    resetModalInput();
+  };
+
+  const handleWithdraw = async () => {
+    setLoadingWithdraw(true);
     try {
-      await withdraw(isEth, val);
+      await withdraw();
       toast.success("Withdrawal Successful");
     } catch (error) {
-      toast.error("Withdrawal Failed");
+      const errorMessage = (error as Error)?.message;
+      const errorMessageAfterTransactionError = errorMessage.split('TransactionError:')[1].split('contract:')[0].trim();
+      toast.error(
+        <div>
+          <p>Withdrawal Failed</p>
+          <h3>{errorMessageAfterTransactionError}</h3>
+        </div>
+      );
     } finally {
       setLoadingWithdraw(false);
-      setModalData({
-        amount: 0,
-        title: "",
-        onSubmit: (val: number) => {},
-      });
     }
   };
 
-  const handleSubmitOnAddBalance = async (val: number) => {
+  const handleAddBalance = async () => {
     setLoadingAddBalance(true);
-    setModalOpen(false);
     try {
-      await deposit(isEth, val);
+      await deposit();
       toast.success("Balance Added Successfully");
     } catch (error) {
       toast.error("Adding Balance Failed");
     } finally {
       setLoadingAddBalance(false);
-      setModalData({
-        amount: 0,
-        title: "",
-        onSubmit: () => {},
-      });
     }
   };
 
-  const handleTokenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setIsEth(event.target.value === "ETH");
+  const resetModalInput = () => {
+    setModalInput({
+      isEth: true,
+      amount: 0,
+    });
   };
 
   return (
@@ -137,14 +132,14 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
 
       {isModalOpen && (
         <Modal
-          modalData={modalData}
+          modalData={modalInput}
           onAmountChange={handleAmountChange}
           onClose={() => setModalOpen(false)}
-          onTokenChange={handleTokenChange} // Pass the token change handler
-          isEth={isEth} // Pass the isEth state to Modal
+          onTokenChange={handleTokenChange}
+          isEth={modalInput.isEth}
+          onSubmit={handleSubmit}
         />
       )}
-      <ToastContainer />
     </div>
   );
 };

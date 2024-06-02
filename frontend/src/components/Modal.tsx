@@ -4,13 +4,12 @@ import { X } from "lucide-react";
 interface ModalProps {
   modalData: {
     amount: number;
-    title: string;
-    onSubmit: (val: number) => void;
   };
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
   onTokenChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  isEth: boolean; // Receive isEth as a prop
+  isEth: boolean;
+  onSubmit: () => void;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -19,15 +18,21 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   onTokenChange,
   isEth,
+  onSubmit,
 }) => {
-  const [localAmount, setLocalAmount] = useState(modalData.amount);
+  const [localAmount, setLocalAmount] = useState(String(modalData.amount));
 
   useEffect(() => {
-    setLocalAmount(modalData.amount);
+    setLocalAmount(String(modalData.amount));
   }, [modalData.amount]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(event.target.value);
+    let value = event.target.value;
+    if (value === '0' || value === '') {
+      value = '';
+    } else {
+      value = String(Number(value));
+    }
     setLocalAmount(value);
     onAmountChange(event);
   };
@@ -41,12 +46,12 @@ const Modal: React.FC<ModalProps> = ({
         >
           <X />
         </button>
-        <h2 className="text-2xl font-bold mb-4">{modalData.title}</h2>
+        <h2 className="text-2xl font-bold mb-4">{isEth ? "ETH" : "USDC"} Payment</h2>
         <div className="flex flex-col space-y-2 py-2">
           <select
             className="text-black py-2 px-4 rounded w-full border"
             onChange={onTokenChange}
-            value={isEth ? "ETH" : "USDC"} // Set the select value based on isEth
+            value={isEth ? "ETH" : "USDC"}
           >
             <option className="text-black py-2 px-4 rounded w-full border" value="ETH">
               ETH
@@ -65,7 +70,7 @@ const Modal: React.FC<ModalProps> = ({
         </div>
         <button
           className="bg-stealth-yellow hover:bg-stealth-yellow-dark text-white py-2 px-4 rounded w-full"
-          onClick={() => modalData.onSubmit(localAmount)}
+          onClick={onSubmit}
         >
           Confirm Payment
         </button>

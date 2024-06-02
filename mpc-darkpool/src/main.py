@@ -56,15 +56,23 @@ app.config = {
             'RPC': "https://polygon-amoy.g.alchemy.com/v2/SjhJtJ8sLClggBUwq9sJ72HMC4rOjJjE",
             'ADDRESS': "0x32A96ce7203a5257785D801576a61B06e87A5279"
         },
+        'arb': {
+            'RPC': "https://arb-sepolia.g.alchemy.com/v2/8kt_9nM3xUNeRw9EtlZq6OPaHEf8xmTv",
+            'ADDRESS': "0x31333dA7AAcbE968310e09279bda1dD8dE14d805"
+        },
         'avax': {
             'RPC': "https://avalanche-fuji-c-chain-rpc.publicnode.com",
-            'ADDRESS': "0xF7bF22cdC0c16ee8704863d03403cf3DC9650B50"
+            'ADDRESS': "0x18Bb384D85A2E613C89F6cD00eBE936f5370A68c"
         }
     },
     'TOKEN_ADDRESSES': {
         'amoy': {
             'ETH': '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
             'USDC': '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582'
+        },
+        'arb': {
+            'ETH': '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+            'USDC': '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'
         },
         'avax': {
             'ETH': '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
@@ -212,6 +220,10 @@ async def sum_encrypted_values(orders):
         ciphertext_sum += ciphertext
     return ciphertext_sum
 
+def encrypt_zero(distributed_scheme):
+    return distributed_scheme.encrypt(0)
+
+
 async def decrypt_all_orders(encrypted_vals):
     distributed_schemes = app.distribute_scema
     results = []
@@ -294,27 +306,24 @@ async def binary_search_and_partial_decrypt(cumulative_sums, target_value, match
 
 @app.post("/execute_orders")
 async def execute_orders_internal(): 
+    print("hello")
     orders = load_orders()
     eth_to_usdc_orders = [order for order in orders if order['sellToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['ETH'] and order['buyToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['USDC']]
     usdc_to_eth_orders = [order for order in orders if order['sellToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['USDC'] and order['buyToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['ETH']]
+    encrypted_zero = encrypt_zero(app.distribute_scema[0])
+
     usdc_to_eth_sum = await sum_encrypted_values(usdc_to_eth_orders)
     eth_to_usdc_sum = await sum_encrypted_values(eth_to_usdc_orders)
 
-    print(eth_to_usdc_orders, usdc_to_eth_orders)
-    # test
-    check = await decrypt_all_orders([usdc_to_eth_sum, eth_to_usdc_sum])
-    print("status",check)
+    usdc_to_eth_is_zero = await decrypt_all_orders([usdc_to_eth_sum - encrypted_zero])
+    eth_to_usdc_is_zero = await decrypt_all_orders([eth_to_usdc_sum - encrypted_zero])
+
+    if usdc_to_eth_is_zero[0] == 0 or eth_to_usdc_is_zero[0] == 0:
+     print("Invalid orders: One of the sums is zero")
+     return {"error": "Invalid orders: One of the sums is zero"}
 
     encrypted_diffrence = (eth_to_usdc_sum - usdc_to_eth_sum)
     decrypted_diffrence = await decrypt_all_orders([encrypted_diffrence])
-
-    usdc_to_eth_check = usdc_to_eth_sum - encrypted_diffrence
-    eth_to_usdc_check = eth_to_usdc_sum - encrypted_diffrence
-    status = await decrypt_all_orders([usdc_to_eth_check, eth_to_usdc_check])
-
-    
-    if status[0] == 0 or status[1] == 0:
-        return {"error": "Invalid orders"}
 
     if decrypted_diffrence[0] > 0:
         larger_orders, smaller_orders = eth_to_usdc_orders, usdc_to_eth_orders
@@ -392,10 +401,24 @@ async def execute_matched_orders(request: List[dict]):
         print(f"Error executing matched orders: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+async def periodic_task():
+    while True:
+        try:
+            await execute_orders_internal()
+        except Exception as e:
+            print(f"Error in periodic task: {e}")
+        # await asyncio.sleep(10 * 60 * 60) 
+        await asyncio.sleep(10 ) 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.distribute_scema = await setup()
-    yield
+    task = asyncio.create_task(periodic_task())
+    try:
+        yield
+    finally:
+        task.cancel()
+        await task
 
 app.router.lifespan_context = lifespan
 

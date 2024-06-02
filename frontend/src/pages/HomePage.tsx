@@ -10,9 +10,6 @@ const HomePage = () => {
     deposit,
     userBalance,
     getBalance,
-    withdraw,
-    getUserOrder,
-    getPendingWithdrawals,
   }: any = useContract();
 
   const data = async () => {
