@@ -19,6 +19,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance,price }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
   const [loadingAddBalance, setLoadingAddBalance] = useState(false);
+  const [ render, setRender ] = useState(false);
 
   const { deposit, withdraw, modalInput, setModalInput }: any = useContract();
   const [action, setAction] = useState<string | null>(null);
@@ -58,6 +59,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance,price }) => {
     try {
       await withdraw();
       toast.success("Withdrawal Successful");
+      setRender(!render)
     } catch (error) {
       const errorMessage = (error as Error)?.message;
       const errorMessageAfterTransactionError = errorMessage.split('TransactionError:')[1].split('contract:')[0].trim();
@@ -77,6 +79,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance,price }) => {
     try {
       await deposit();
       toast.success("Balance Added Successfully");
+      setRender(!render)
     } catch (error) {
       toast.error("Adding Balance Failed");
     } finally {
@@ -102,7 +105,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance,price }) => {
           </div>
           <div>
             USDC balance
-            <p className="text-4xl font-bold">${((userBalance.USDC /1e6) * price).toFixed(4)}</p>
+            <p className="text-4xl font-bold">${(userBalance.USDC/ 1e6).toFixed(4)}</p>
           </div>
         </div>
       </div>

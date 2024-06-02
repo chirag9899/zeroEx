@@ -36,9 +36,11 @@ const Sell: React.FC<OrderProps> = ({ formData, setData, price }) => {
 
   // Static exchange rates for demonstration
   const exchangeRates: { [key: string]: number } = {
-    'ETH/USDC': price,  // Example: 1 ETH = 20 USDC
-    'USDC/ETH': 1/price  // Example: 1 USDC = 0.05 ETH
+    'ETH/USDC': price,  
+    'USDC/ETH':(1/ 1e6)   
   };
+
+  console.log("exchangeRates",exchangeRates)
 
   useEffect(() => {
     const inputAmount = parseFloat(inputValue) || 0;

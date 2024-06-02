@@ -109,8 +109,13 @@ const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
       <div className="mb-4">
         <div className="flex justify-between mb-2 space-x-20">
           <span className="text-gray-700">Rate</span>
-          <span>1 USDT = {(1/price).toFixed(6)}</span>
+          <span>1 eth = {(price* 1e18).toFixed(6)}</span>
         </div>
+        <p className="text-xs text-gray-600">Enter ETH  (1 ETH = 10^18 Wei)</p>
+        <p className="text-xs text-gray-600">Enter USDC (1 USD = 10^6)</p>
+        <a className="text-xs text-blue-700 border-b border-black " target="_blank" rel="noopener noreferrer" href="https://eth-converter.com/">use eth converter</a>
+
+
         <div className="mt-4 mb-6 border-t border-dashed border-black"></div>
       </div>
       <button

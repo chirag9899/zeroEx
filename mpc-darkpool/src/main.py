@@ -18,6 +18,8 @@ from tno.mpc.protocols.distributed_keygen.paillier_shared_key import PaillierSha
 from web3 import Web3
 from eth_account import Account
 from datetime import datetime
+import requests
+
 
 
 
@@ -106,6 +108,15 @@ async def periodic_task():
             print(f"Error in periodic task: {e}")
         await asyncio.sleep(10 * 60 * 60)  # 10 hours * 60 minutes/hour * 60 seconds/minute
 
+
+def buy_eth_with_usdc(usdc_amount_wei, eth_price_usd):
+    eth_amount_wei = usdc_amount_wei * 10**18 / eth_price_usd
+    return eth_amount_wei
+
+
+def sell_eth_for_usdc(eth_amount_wei, eth_price_usd):
+    usdc_amount_wei = eth_amount_wei * eth_price_usd / 10**18
+    return usdc_amount_wei
 
 # Utility functions
 def load_orders():
@@ -306,7 +317,7 @@ async def binary_search_and_partial_decrypt(cumulative_sums, target_value, match
 
 @app.post("/execute_orders")
 async def execute_orders_internal(): 
-    print("hello")
+    print("welcome")
     orders = load_orders()
     eth_to_usdc_orders = [order for order in orders if order['sellToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['ETH'] and order['buyToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['USDC']]
     usdc_to_eth_orders = [order for order in orders if order['sellToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['USDC'] and order['buyToken'] == app.config['TOKEN_ADDRESSES'][order['chain']]['ETH']]
@@ -370,13 +381,25 @@ async def execute_matched_orders(request: List[dict]):
 
         for order in request:
             nonce = w3.eth.get_transaction_count(account.address)
-            fetched_amount = 1000
-
+            response = requests.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
+            eth_price = response.json()['ethereum']['usd']
+            wei_price = eth_price * 10**18  
+            
+            if order['buyToken'] == w3.to_checksum_address("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"):  # Replace "ETH_ADDRESS" with actual ETH address
+                    # Buying ETH with USDC
+                    eth_amount = buy_eth_with_usdc(order['encrypted_order_value'] , eth_price)
+                    fetched_amount = int(eth_amount)
+            elif order['sellToken'] == w3.to_checksum_address("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"):  # Replace "ETH_ADDRESS" with actual ETH address
+                    # Selling ETH for USDC
+                    usdc_amount = sell_eth_for_usdc(order['encrypted_order_value'], eth_price)
+                    fetched_amount = int(usdc_amount * 10**6)
+            else:
+                    fetched_amount = 0  
             formatted_order = (
                 order['user_address'],
                 order['trader_address'],
                 int(order['encrypted_order_value']),
-                fetched_amount,
+                int(fetched_amount),
                 w3.to_checksum_address(order['buyToken']),
                 w3.to_checksum_address(order['sellToken']),
                 int(order['createdAt']),
@@ -407,8 +430,7 @@ async def periodic_task():
             await execute_orders_internal()
         except Exception as e:
             print(f"Error in periodic task: {e}")
-        # await asyncio.sleep(10 * 60 * 60) 
-        await asyncio.sleep(10 ) 
+        await asyncio.sleep(10 * 60 * 60) 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

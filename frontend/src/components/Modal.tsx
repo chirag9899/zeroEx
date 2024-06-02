@@ -65,7 +65,7 @@ const Modal: React.FC<ModalProps> = ({
             value={localAmount}
             onChange={handleChange}
             className="border border-gray-300 p-2 mb-4 w-full rounded"
-            placeholder="Enter Amount"
+            placeholder="Enter Amount "
           />
         </div>
         <button

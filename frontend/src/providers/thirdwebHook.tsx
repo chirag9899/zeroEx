@@ -18,6 +18,7 @@ import {
 import { abi as executerAbi } from "../abi/executerAbi.ts";
 import { abi as usdcAbi } from "../abi/usdcAbi.ts";
 import * as paillierBigint from "paillier-bigint";
+import { toast } from "react-toastify";
 
 interface ContractContextState {
   contractInstance: ThirdwebContract | undefined;
@@ -35,7 +36,7 @@ interface ContractContextState {
     amount: number;
   };
   setModalInput: React.Dispatch<React.SetStateAction<{ isEth: boolean; amount: number; }>>;
-  fetchData: () => Promise<void>;
+  fetchData: () => Promise<{ ethereum: { usd: number; }; } | undefined>;
   total: string;
   setTotal: React.Dispatch<React.SetStateAction<string>>;
   pendingWithdrawals: WithdrawalRequest[] | [];
@@ -353,6 +354,11 @@ const deposit = async () => {
       throw new Error("Contract instance is undefined");
     }
 
+    if(amount <= 0) {
+      toast.error("Amount should be greater than 0");
+      return
+    }
+
     let transaction: PreparedTransaction<any>;
 
     if (!isEth) {
@@ -369,18 +375,25 @@ const deposit = async () => {
         params: [activeAccount.address, contractInstance.address],
       });
 
+      console.log(BigInt(allowance), BigInt(amount))
 
-      if (true) {
-        const approveTx = prepareContractCall({
-          contract: usdcTokenInstance,
-          method: "function approve(address _spender, uint256 _value) public returns (bool success)",
-          params: [contractInstance.address, BigInt(amount)],
-        });
 
-        await sendAndConfirmTransaction({
-          transaction: approveTx,
-          account: activeAccount,
-        });
+      try {
+        if (BigInt(allowance)< BigInt(amount)) {
+          const approveTx = prepareContractCall({
+            contract: usdcTokenInstance,
+            method: "function approve(address _spender, uint256 _value) public returns (bool success)",
+            params: [contractInstance.address, BigInt(amount)],
+          });
+  
+          const result = await sendTransaction({
+            transaction: approveTx,
+            account: activeAccount,
+          });
+  
+        }
+      } catch (error) {
+        toast.error("Approvance Failed")
       }
     }
 
@@ -398,6 +411,7 @@ const deposit = async () => {
       account: activeAccount,
     });
 
+    await getBalance()
     return result;
   } catch (error) {
     console.log({ error });
@@ -412,8 +426,10 @@ const fetchData = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    const ethPriceInUSD = data.ethereum.usd;
+    const weiPriceInUSD = ethPriceInUSD / 1e18;
     localStorage.setItem('price', JSON.stringify({ price: data.ethereum.usd, timestamp: Date.now()}))
-    return data
+    return { ethereum: { usd: weiPriceInUSD } }
   } catch (error) {
     console.log(error);
   }
@@ -442,6 +458,8 @@ const fetchData = async () => {
         transaction: transaction,
         account: activeAccount,
       });
+
+      await getBalance()
 
       return result;
     } catch (error) {
