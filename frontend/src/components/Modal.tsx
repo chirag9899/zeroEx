@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+
 interface ModalProps {
   modalData: {
     amount: number;
@@ -8,27 +9,26 @@ interface ModalProps {
   };
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
-  onTokenChange: (event: React.ChangeEvent<HTMLSelectElement>) => void; // Add this prop
+  onTokenChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  isEth: boolean; // Receive isEth as a prop
 }
 
 const Modal: React.FC<ModalProps> = ({
   modalData,
   onAmountChange,
   onClose,
-  onTokenChange, // Add this prop
+  onTokenChange,
+  isEth,
 }) => {
   const [localAmount, setLocalAmount] = useState(modalData.amount);
 
-  const handleFocus = () => {
-    if (localAmount === 0) {
-      setLocalAmount(0);
-    }
-  };
-
-  console.log(modalData);
+  useEffect(() => {
+    setLocalAmount(modalData.amount);
+  }, [modalData.amount]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalAmount(Number(event.target.value));
+    const value = Number(event.target.value);
+    setLocalAmount(value);
     onAmountChange(event);
   };
 
@@ -45,25 +45,19 @@ const Modal: React.FC<ModalProps> = ({
         <div className="flex flex-col space-y-2 py-2">
           <select
             className="text-black py-2 px-4 rounded w-full border"
-            onChange={onTokenChange} // Add this handler
+            onChange={onTokenChange}
+            value={isEth ? "ETH" : "USDC"} // Set the select value based on isEth
           >
-            <option
-              className="text-black py-2 px-4 rounded w-full border"
-              value="ETH"
-            >
+            <option className="text-black py-2 px-4 rounded w-full border" value="ETH">
               ETH
             </option>
-            <option
-              className="text-black py-2 px-4 rounded w-full border"
-              value="USDC"
-            >
+            <option className="text-black py-2 px-4 rounded w-full border" value="USDC">
               USDC
             </option>
           </select>
           <input
             type="number"
             value={localAmount}
-            // onFocus={handleFocus}
             onChange={handleChange}
             className="border border-gray-300 p-2 mb-4 w-full rounded"
             placeholder="Enter Amount"
@@ -71,9 +65,7 @@ const Modal: React.FC<ModalProps> = ({
         </div>
         <button
           className="bg-stealth-yellow hover:bg-stealth-yellow-dark text-white py-2 px-4 rounded w-full"
-          onClick={() => {
-            modalData.onSubmit(localAmount);
-          }}
+          onClick={() => modalData.onSubmit(localAmount)}
         >
           Confirm Payment
         </button>

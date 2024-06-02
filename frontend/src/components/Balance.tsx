@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ClipLoader } from "react-spinners"; // Import the loader
 import { useContract } from "../providers/thirdwebHook";
+import { useActiveWalletChain } from "thirdweb/react";
 
 interface BalanceProps {
   userBalance: {
@@ -14,6 +15,7 @@ interface BalanceProps {
 }
 
 const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
+  const chain = useActiveWalletChain();
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
   const [loadingAddBalance, setLoadingAddBalance] = useState(false);
@@ -27,37 +29,35 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
   const { deposit, getBalance, withdraw, getUserOrder }: any = useContract();
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("updatting", event.target.value);
     setModalData((prevData) => ({
       ...prevData,
       amount: Number(event.target.value),
     }));
   };
-  console.log(modalData);
 
   const handleOnClick = (method: string) => {
-    console.log("withdraw", modalData);
-    if (method === "withdraw") {
-      setModalData({
-        ...modalData,
-        title: "Withdraw",
-        onSubmit: handleSubmitOnWithdraw,
-      });
-    } else if (method === "addBalance") {
-      console.log("add balance", modalData);
-      setModalData({
-        ...modalData,
-        title: "Add Balance",
-        onSubmit: handleSubmitOnAddBalance,
-      });
-    }
-    setModalOpen(true);
+    setModalOpen(false); // Ensure modal is closed before opening it with new data
+    setTimeout(() => {
+      if (method === "withdraw") {
+        setModalData({
+          ...modalData,
+          title: "Withdraw",
+          onSubmit: (val: number) => handleSubmitOnWithdraw(val),
+        });
+      } else if (method === "addBalance") {
+        setModalData({
+          ...modalData,
+          title: "Add Balance",
+          onSubmit: (val: number) => handleSubmitOnAddBalance(val),
+        });
+      }
+      setModalOpen(true);
+    }, 0);
   };
 
   const handleSubmitOnWithdraw = async (val: number) => {
     setLoadingWithdraw(true);
     setModalOpen(false);
-    console.log(isEth, modalData.amount);
     try {
       await withdraw(isEth, val);
       toast.success("Withdrawal Successful");
@@ -76,10 +76,6 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
   const handleSubmitOnAddBalance = async (val: number) => {
     setLoadingAddBalance(true);
     setModalOpen(false);
-    console.log(val);
-
-    console.log(isEth, modalData.amount);
-
     try {
       await deposit(isEth, val);
       toast.success("Balance Added Successfully");
@@ -116,7 +112,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
       </div>
       <div className="flex space-x-4">
         <button
-          className="w-20 h-20 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800 "
+          className="w-20 h-20 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800"
           onClick={() => handleOnClick("withdraw")}
           disabled={loadingWithdraw}
         >
@@ -127,7 +123,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
           )}
         </button>
         <button
-          className="w-20 h-20 bg-stealth-yellow text-black rounded-full flex items-center justify-center hover:bg-stealth-yellow-dark "
+          className="w-20 h-20 bg-stealth-yellow text-black rounded-full flex items-center justify-center hover:bg-stealth-yellow-dark"
           onClick={() => handleOnClick("addBalance")}
           disabled={loadingAddBalance}
         >
@@ -145,6 +141,7 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
           onAmountChange={handleAmountChange}
           onClose={() => setModalOpen(false)}
           onTokenChange={handleTokenChange} // Pass the token change handler
+          isEth={isEth} // Pass the isEth state to Modal
         />
       )}
       <ToastContainer />

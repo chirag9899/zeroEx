@@ -1,5 +1,4 @@
 export const abi = [
-
 	{
 		"inputs": [
 			{
@@ -93,6 +92,11 @@ export const abi = [
 	{
 		"inputs": [],
 		"name": "NothingToWithdraw",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "ReentrancyGuardReentrantCall",
 		"type": "error"
 	},
 	{

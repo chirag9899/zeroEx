@@ -1,26 +1,24 @@
 [
-  
     {
         "user_address": "0xE2db7ef93684d06BbF47137000065cF26E878B2e",
         "selectedMarket": "USDC/ETH",
         "status": 0,
-        "createdAt": 1717247794,
-        "encrypted_order_value": "1687013166645918847829543048006918462608271395061846719344842230423609958304219",
-        "buyToken": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+        "createdAt": 1717256202,
+        "encrypted_order_value": "2753684553849257563404257252870789601189836032527621178762840833728759512094187",
+        "buyToken": "0xasdasdeafb1BDbe2F0316DF893fd58CE46AA4d",
         "sellToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-        "trader_address": "0x0000000000000000000000000000000000000000",
-        "chain": "amoy"
+        "trader_address": "",
+        "chain": "avax"
     },
-
     {
         "user_address": "0xE2db7ef93684d06BbF47137000065cF26E878B2e",
         "selectedMarket": "USDC/ETH",
         "status": 0,
-        "createdAt": 1717247794,
-        "encrypted_order_value": "1687013166645918847829543048006918462608271395061846719344842230423609958304219",
-        "buyToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-        "sellToken": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
-        "trader_address": "0x0000000000000000000000000000000000000000",
-        "chain": "amoy"
+        "createdAt": 1717256210,
+        "encrypted_order_value": "1446480217977123648805698298103296535513668972990869995694552351916061478120640",
+        "buyToken": "0xasdasdeafb1BDbe2F0316DF893fd58CE46AA4d",
+        "sellToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "trader_address": "",
+        "chain": "avax"
     }
 ]

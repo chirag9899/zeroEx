@@ -30,36 +30,17 @@ interface OrderProps {
 }
 
 const OrderSummary: React.FC<OrderProps> = ({ formData }) => {
+  const {chainTokenAddresses} = useContract()
   const account = useActiveAccount();
   const { pubkey }: any = useContract();
   const [loadingCreateOrder, setLoadingCreateOrder] = useState(false);
+
 
   const handleCreateOrder = () => {
     setLoadingCreateOrder(true);
     let unixTimestamp = Math.floor(Date.now() / 1000);
 
-    const chainTokenAddresses: { [key: string]: { [key: string]: string } } = {
-      arb: {
-        USDC: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
-        ETH: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-      },
-      avax: {
-        USDC: "0xasdasdeafb1BDbe2F0316DF893fd58CE46AA4d",
-        ETH: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-      },
-    };
 
-    console.log({
-      user_address: account?.address,
-      selectedMarket: formData.selectedMarket,
-      status: formData.status,
-      createdAt: unixTimestamp,
-      encrypted_order_value: pubkey.encrypt(BigInt(formData.amount)).toString(),
-      buyToken: chainTokenAddresses[formData.chain][formData.buyToken],
-      sellToken: chainTokenAddresses[formData.chain][formData.sellToken],
-      trader_address: "",
-      chain: formData.chain,
-    });
 
     try {
       fetch("http://127.0.0.1:5000/add_order", {
