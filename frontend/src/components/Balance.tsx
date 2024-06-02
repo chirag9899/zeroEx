@@ -11,9 +11,10 @@ interface BalanceProps {
     ETH: number;
     USDC: number;
   };
+  price: number;
 }
 
-const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
+const Balance: React.FC<BalanceProps> = ({ userBalance,price }) => {
   const chain = useActiveWalletChain();
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
@@ -97,11 +98,11 @@ const Balance: React.FC<BalanceProps> = ({ userBalance }) => {
         <div className="flex space-x-10">
           <div>
             ETH balance
-            <p className="text-4xl font-bold">${userBalance.ETH}</p>
+            <p className="text-4xl font-bold">${((userBalance.ETH / 1e18) * price).toFixed(4)}</p>
           </div>
           <div>
             USDC balance
-            <p className="text-4xl font-bold">${userBalance.USDC}</p>
+            <p className="text-4xl font-bold">${((userBalance.USDC /1e6) * price).toFixed(4)}</p>
           </div>
         </div>
       </div>

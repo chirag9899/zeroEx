@@ -39,6 +39,8 @@ interface ContractContextState {
   total: string;
   setTotal: React.Dispatch<React.SetStateAction<string>>;
   pendingWithdrawals: WithdrawalRequest[] | [];
+  currentPrice: number,
+  setCurrentPrice: React.Dispatch<React.SetStateAction<number>>;
 
 
 }
@@ -124,7 +126,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
   const [modalInput, setModalInput] = useState<{isEth: boolean, amount: number}>({isEth: true, amount: 0});
   const [total, setTotal] = useState("0");
   const [pendingWithdrawals, setPendingWithdrawals] = useState<WithdrawalRequest[]>([]);
-
+  const [currentPrice, setCurrentPrice] = useState(localStorage.getItem('price') ? JSON.parse(localStorage.getItem('price') || "").price : 0);
 
 
   const activeChain = useActiveWalletChain();
@@ -209,6 +211,7 @@ const chainTokenAddresses: { [key: string]: { [key: string]: string } } = {
       method: "function getUserBalance(address) view returns ((uint256, uint256))",
       params: [activeAccount?.address?.toString() || "0xe2db7ef93684d06bbf47137000065cf26e878b2e"],
     });
+    console.log(balance)
     setUserBalance({ ETH: Number(balance[0]), USDC: Number(balance[1]) });
     return balance;
   };
@@ -386,7 +389,8 @@ const deposit = async () => {
       method: "function depositFunds(bool isEth ,uint256 amount) public payable",
       params: [isEth, BigInt(amount)],
       value: isEth ? BigInt(amount) : BigInt(0),
-      gas: BigInt("500000"),
+      gas: BigInt("800000"), 
+      maxFeePerGas: BigInt("20000000000"),
     });
 
     const result = await sendTransaction({
@@ -408,7 +412,7 @@ const fetchData = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    console.log(data)
+    localStorage.setItem('price', JSON.stringify({ price: data.ethereum.usd, timestamp: Date.now()}))
     return data
   } catch (error) {
     console.log(error);
@@ -463,7 +467,8 @@ const fetchData = async () => {
         setModalInput,
         fetchData,
         total, setTotal,
-        pendingWithdrawals
+        pendingWithdrawals,
+        currentPrice, setCurrentPrice
 
       }}
     >
