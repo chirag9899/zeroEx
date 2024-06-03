@@ -61,3 +61,7 @@ ZeroEx is not just a platform for trading existing crypto assets. It is designed
 ## Conclusion
 
 ZeroEx is more than just a trading platform—it's a step towards a more robust, efficient, and equitable DeFi ecosystem. Let's build a better DeFi together!
+
+## LICENSE
+
+ZeroEx is open source and freely available for commercial and private use under the [MIT License](https://opensource.org/licenses/MIT). This licensing choice reflects our commitment to the open development and widespread dissemination of our technology, fostering innovation and collaboration within the community.
