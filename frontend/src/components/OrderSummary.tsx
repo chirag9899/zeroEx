@@ -34,7 +34,7 @@ interface OrderProps {
 
 
 const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
-  const { chainTokenAddresses, total } = useContract();
+  const { chainTokenAddresses } = useContract();
   const account = useActiveAccount();
   const { pubkey }: any = useContract();
   const [ render, setRender ] = useState(false);
@@ -82,7 +82,7 @@ const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+         await response.json();
         const existingOrders = JSON.parse(
           localStorage.getItem("orderData") || "[]"
         );

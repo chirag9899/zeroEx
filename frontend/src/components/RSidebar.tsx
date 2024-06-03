@@ -8,7 +8,7 @@ import {
   createWallet,
   walletConnect,
   inAppWallet,
-  Account,
+  // Account,
 } from "thirdweb/wallets";
 import Sell from './Sell';
 import ToggleButton from './ToggleButton';
@@ -46,7 +46,7 @@ const wallets = [
 const RSidebar = () => {
   const activeAccount = useActiveAccount();
   const activeChain = useActiveWalletChain();
-  const { fetchData, total, setTotal } = useContract();
+  const { fetchData } = useContract();
   const [formData, setFormData] = useState({
     user_address: activeAccount?.address || '',
     selectedMarket: 'USDC/ETH',

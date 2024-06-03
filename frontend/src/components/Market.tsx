@@ -1,5 +1,6 @@
 // TradingViewWidget.jsx
-import React, { useEffect, useRef, memo } from 'react';
+// @ts-ignore
+import { useEffect, useRef, memo } from 'react';
 
 function Market() {
   const container = useRef();
@@ -25,7 +26,10 @@ function Market() {
           "hide_volume": true,
           "support_host": "https://www.tradingview.com"
         }`;
-      container.current.appendChild(script);
+        if (container.current) {
+          (container.current as HTMLElement).appendChild(script);
+        }
+     
     },
     []
   );

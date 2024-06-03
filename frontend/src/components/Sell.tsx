@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useContract } from '../providers/thirdwebHook';
-import { ethers } from 'ethers';
 
+// import { ethers } from 'ethersz';
 interface OrderProps {
   formData: {
     user_address: string;
@@ -32,7 +32,7 @@ const Sell: React.FC<OrderProps> = ({ formData, setData, price }) => {
   const { amount, buyToken, selectedMarket } = formData;
   const inputValue = amount;
   const [outputAmount, setOutputAmount] = React.useState(0);
-  const { fetchData, total, setTotal } = useContract();
+  const {  setTotal } = useContract();
 
 
   // Static exchange rates for demonstration

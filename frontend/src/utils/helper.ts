@@ -7,7 +7,7 @@ function simpleFakeApiCall() {
   });
 }
 
-async function depositFunds(amount: number) {
+async function depositFunds() {
   await simpleFakeApiCall();
   console.log("Depositing funds...");
   // toast

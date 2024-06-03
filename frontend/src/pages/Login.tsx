@@ -2,14 +2,14 @@ import { ConnectEmbed } from 'thirdweb/react';
 import { createThirdwebClient } from 'thirdweb';
 import { useNavigate } from 'react-router-dom';
 import {
-  ThirdwebProvider,
+  // ThirdwebProvider,
   // ConnectButton,
   lightTheme,
 } from "thirdweb/react";
 import {
   createWallet,
   walletConnect,
-  inAppWallet,
+  // inAppWallet,
 } from "thirdweb/wallets";
 
 import logo from "../assets/Zex Logo.svg"

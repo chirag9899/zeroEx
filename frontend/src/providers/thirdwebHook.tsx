@@ -5,14 +5,14 @@ import {
   getContract,
   readContract,
   prepareContractCall,
-  sendAndConfirmTransaction,
+  // sendAndConfirmTransaction,
   sendTransaction,
   ThirdwebContract,
   PreparedTransaction,
 } from "thirdweb";
 import {
   useActiveAccount,
-  useSendTransaction,
+  // useSendTransaction,
   useActiveWalletChain,
 } from "thirdweb/react";
 import { abi as executerAbi } from "../abi/executerAbi.ts";
@@ -58,28 +58,28 @@ interface ContractOrder {
   status: number;
 }
 
-const contractOrders = [
-  {
-    user: "0xE2db7ef93684d06BbF47137000065cF26E878B2e",
-    traderAddress: "0xTraderAddress1",
-    amount: BigInt(12), // Converted from "012"
-    amountToTransfer: BigInt(10),
-    buyToken: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
-    sellToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-    createdAt: 1717304223306, // Example timestamp
-    status: 0,
-  },
-  {
-    user: "0xE2db7ef93684d06BbF47137000065cF26E878B2e",
-    traderAddress: "0xTraderAddress2",
-    amount: BigInt(1), // Converted from "01"
-    amountToTransfer: BigInt(1),
-    buyToken: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
-    sellToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-    createdAt: "1717303223306", // Example timestamp
-    status: 0,
-  },
-];
+// const contractOrders = [
+//   {
+//     user: "0xE2db7ef93684d06BbF47137000065cF26E878B2e",
+//     traderAddress: "0xTraderAddress1",
+//     amount: BigInt(12), // Converted from "012"
+//     amountToTransfer: BigInt(10),
+//     buyToken: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+//     sellToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+//     createdAt: 1717304223306, // Example timestamp
+//     status: 0,
+//   },
+//   {
+//     user: "0xE2db7ef93684d06BbF47137000065cF26E878B2e",
+//     traderAddress: "0xTraderAddress2",
+//     amount: BigInt(1), // Converted from "01"
+//     amountToTransfer: BigInt(1),
+//     buyToken: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+//     sellToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+//     createdAt: "1717303223306", // Example timestamp
+//     status: 0,
+//   },
+// ];
 
 enum Status {
   COMPLETED,
@@ -368,9 +368,9 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deposit = async () => {
     let { isEth, amount: ethAmount } = modalInput;
-    let amount = ethers.utils.parseUnits(ethAmount.toString(), "ether");
+    let amount = ethers.utils.parseUnits(ethAmount.toString(), "ether").toBigInt();
     if(!isEth) {
-      amount = ethers.utils.parseUnits(ethAmount.toString(), 6);
+      amount = ethers.utils.parseUnits(ethAmount.toString(), 6).toBigInt();
     }
     console.log("Inside deposit", isEth, amount); // Log to check values
     try {
@@ -382,7 +382,7 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
         throw new Error("Contract instance is undefined");
       }
 
-      if (amount.lte(0)) {
+      if (amount < 0) {
         toast.error("Amount should be greater than 0");
         return;
       }
@@ -410,15 +410,15 @@ export const ContractProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(BigInt(allowance), amount);
 
         try {
-          if (BigInt(allowance) < amount.toBigInt()) {
+          if (BigInt(allowance) < amount) {
             const approveTx = prepareContractCall({
               contract: usdcTokenInstance,
               method:
                 "function approve(address _spender, uint256 _value) public returns (bool success)",
-              params: [contractInstance.address, amount.toBigInt()],
+              params: [contractInstance.address, amount],
             });
 
-            const result = await sendTransaction({
+            await sendTransaction({
               transaction: approveTx,
               account: activeAccount,
             });

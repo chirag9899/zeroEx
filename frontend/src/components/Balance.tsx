@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Modal from "./Modal"; // Import the modal component
 import { ArrowDownLeft, Plus } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { ClipLoader } from "react-spinners"; // Import the loader
 import { useContract } from "../providers/thirdwebHook";
-import { useActiveWalletChain } from "thirdweb/react";
+// import { useActiveWalletChain } from "thirdweb/react";
 
 interface BalanceProps {
   userBalance: {
@@ -15,7 +15,6 @@ interface BalanceProps {
 }
 
 const Balance: React.FC<BalanceProps> = ({ userBalance,price }) => {
-  const chain = useActiveWalletChain();
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
   const [loadingAddBalance, setLoadingAddBalance] = useState(false);
