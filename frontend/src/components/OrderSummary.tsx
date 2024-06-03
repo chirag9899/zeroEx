@@ -43,6 +43,7 @@ const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
     const { user_address, selectedMarket, status, amount, buyToken, sellToken, chain } = formData;
     return user_address && selectedMarket && status !== undefined && Number(amount) > 0 && buyToken && sellToken && chain;
   };
+  const serverUrl = "http://127.0.0.1:5000/"
 
   const handleCreateOrder = async () => {
     if (!validateForm()) {
@@ -72,7 +73,7 @@ const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
   
       const signed = await account?.signMessage({message: orderHash})
       console.log(signed)
-      const response = await fetch("http://127.0.0.1:5000/add_order", {
+      const response = await fetch(`${serverUrl}/add_order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
