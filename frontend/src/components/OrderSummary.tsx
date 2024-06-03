@@ -3,6 +3,7 @@ import { PropagateLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useContract } from "../providers/thirdwebHook";
 import { useActiveAccount } from "thirdweb/react";
+import { ethers, utils } from "ethers";
 
 interface OrderProps {
   formData: {
@@ -48,23 +49,29 @@ const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
       toast.error("Please fill in all fields before confirming.");
       return;
     }
-    setLoadingCreateOrder(true);
-    let unixTimestamp = Math.floor(Date.now() / 1000);
-
-    const orderData = {
-      user_address: account?.address,
-      selectedMarket: formData.selectedMarket,
-      status: formData.status,
-      createdAt: unixTimestamp,
-      encrypted_order_value: pubkey.encrypt(BigInt(formData.amount)).toString(),
-      buyToken: chainTokenAddresses[formData.chain][formData.buyToken],
-      sellToken: chainTokenAddresses[formData.chain][formData.sellToken],
-      trader_address: "0x0000000000000000000000000000000000000000",
-      chain: formData.chain,
-    };
-
-
+   
     try {
+      setLoadingCreateOrder(true);
+      let unixTimestamp = Math.floor(Date.now() / 1000);
+      const isEth = formData.sellToken === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+      const amount = ethers.utils.parseUnits(formData.amount,  isEth ? 18 : 6).toBigInt();
+  
+  
+      const orderData = {
+        user_address: account?.address,
+        selectedMarket: formData.selectedMarket,
+        status: formData.status,
+        createdAt: unixTimestamp,
+        encrypted_order_value: pubkey.encrypt(amount).toString(),
+        buyToken: chainTokenAddresses[formData.chain][formData.buyToken],
+        sellToken: chainTokenAddresses[formData.chain][formData.sellToken],
+        trader_address: "0x0000000000000000000000000000000000000000",
+        chain: formData.chain,
+      };
+      const orderHash =  ethers.utils.keccak256(utils.toUtf8Bytes(JSON.stringify(orderData)))
+  
+      const signed = await account?.signMessage({message: orderHash})
+      console.log(signed)
       const response = await fetch("http://127.0.0.1:5000/add_order", {
         method: "POST",
         headers: {
@@ -111,9 +118,9 @@ const OrderSummary: React.FC<OrderProps> = ({ formData , price }) => {
           <span className="text-gray-700">Rate</span>
           <span>1 eth = {(price* 1e18).toFixed(6)}</span>
         </div>
-        <p className="text-xs text-gray-600">Enter ETH  (1 ETH = 10^18 Wei)</p>
+        {/* <p className="text-xs text-gray-600">Enter ETH  (1 ETH = 10^18 Wei)</p>
         <p className="text-xs text-gray-600">Enter USDC (1 USD = 10^6)</p>
-        <a className="text-xs text-blue-700 border-b border-black " target="_blank" rel="noopener noreferrer" href="https://eth-converter.com/">use eth converter</a>
+        <a className="text-xs text-blue-700 border-b border-black " target="_blank" rel="noopener noreferrer" href="https://eth-converter.com/">use eth converter</a> */}
 
 
         <div className="mt-4 mb-6 border-t border-dashed border-black"></div>

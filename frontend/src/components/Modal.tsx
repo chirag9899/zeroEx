@@ -28,11 +28,7 @@ const Modal: React.FC<ModalProps> = ({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
-    if (value === '0' || value === '') {
-      value = '';
-    } else {
-      value = String(Number(value));
-    }
+    // value = String(Number(value));
     setLocalAmount(value);
     onAmountChange(event);
   };

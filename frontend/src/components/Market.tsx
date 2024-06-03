@@ -12,7 +12,7 @@ function Market() {
       script.innerHTML = `
         {
           "autosize": true,
-          "symbol": "BITSTAMP:BTCUSD",
+          "symbol": "BITSTAMP:ETHUSDC",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "light",

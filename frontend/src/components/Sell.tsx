@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useContract } from '../providers/thirdwebHook';
+import { ethers } from 'ethers';
 
 interface OrderProps {
   formData: {
@@ -37,17 +38,22 @@ const Sell: React.FC<OrderProps> = ({ formData, setData, price }) => {
   // Static exchange rates for demonstration
   const exchangeRates: { [key: string]: number } = {
     'ETH/USDC': price,  
-    'USDC/ETH':(1/ 1e6)   
+    'USDC/ETH':(1/ (price*1e18))   
   };
 
   console.log("exchangeRates",exchangeRates)
 
   useEffect(() => {
+    console.log(`amount`, amount)
     const inputAmount = parseFloat(inputValue) || 0;
     const rateKey = `${formData.sellToken}/${buyToken}`;
     const rate = exchangeRates[rateKey] || 1;
+    console.log(formData.sellToken)
+    const isEth = formData.sellToken === "ETH";
+    const parsedRate = isEth ? rate * 1e18 : rate;
+    console.log(parsedRate)
     setTotal(outputAmount.toFixed(2))
-    setOutputAmount(inputAmount * rate);
+    setOutputAmount(inputAmount * parsedRate);
   }, [inputValue, buyToken, formData.sellToken]);
 
   useEffect(() => {
@@ -117,10 +123,10 @@ const Sell: React.FC<OrderProps> = ({ formData, setData, price }) => {
             <p className="text-lg font-semibold">{`${outputAmount.toFixed(2)} ${receiveCurrency}`}</p>
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <p className="text-sm">Price in $</p>
           <p className="text-lg font-semibold">${outputAmount.toFixed(2)} </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
