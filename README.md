@@ -32,11 +32,44 @@ ZeroEx leverages cutting-edge cryptographic technologies to create a secure, pri
 
 ZeroEx's innovative use of these advanced technologies not only protects against common trading risks such as MEV, slippage, and front-running but also establishes a new standard for privacy and security in digital asset trading.
 
+Here's a more structured and clear format for the installation instructions for your project:
 
-### Key Features
+## Installation
 
-- **Chainlink Integration**: Utilizes Chainlink for reliable midprice execution and secure cross-chain communication.
-- **Dark Pool Mechanism**: Traders can execute orders without exposing their intentions to the market, thus avoiding adverse impacts on pricing.
+To get started with ZeroEx, follow these installation steps for both the frontend and the matcher components of the platform.
+
+### Frontend Installation
+
+To set up the frontend for ZeroEx, follow these commands:
+
+```bash
+# Navigate to the frontend directory
+cd frontend
+
+# Start the frontend application
+npm run dev
+```
+
+### Matcher Installation
+
+The matcher component involves setting up the MPC (Multi-Party Computation) dark pool. Perform the following steps to get it up and running:
+
+```bash
+# Navigate to the MPC dark pool directory
+cd mpc-darkpool
+
+# Install required Python packages
+pip install -r requirements.txt
+
+# Start the MPC process
+python src/main.py
+
+# Start the Executor process
+python src/ccip.py
+```
+
+These steps will set up the necessary components for both the user interface and the backend matching logic of ZeroEx.
+
 
 ### Demonstration
 
