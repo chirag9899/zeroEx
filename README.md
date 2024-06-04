@@ -71,10 +71,6 @@ python src/ccip.py
 These steps will set up the necessary components for both the user interface and the backend matching logic of ZeroEx.
 
 
-### Demonstration
-
-[![Demo](https://img.youtube.com/vi/ARd3M7BNezA/0.jpg)](https://www.youtube.com/watch?v=ARd3M7BNezA)
-
 ## Challenges
 
 We already knew about MPC and Homographic Encryption but implementing it was a bit difficult still our team pulled it off and built a great protocol.
